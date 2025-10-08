@@ -3,6 +3,8 @@
 #ifndef CORES_H
 #define CORES_H
 
+#include "raylib.h"
+
 enum Cor
 {
   BRANCO,       // Limão

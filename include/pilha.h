@@ -7,23 +7,23 @@
 
 #include "cores.h"
 
-struct pilha
+struct Pilha
 {
   Cor info[TAMANHO_MAX];
   unsigned char size;
 };
 
-inline void cria(pilha &p)
+inline void cria(Pilha &p)
 {
   p.size = 0;
 }
 
-inline bool cheia(const pilha &p)
+inline bool cheia(const Pilha &p)
 {
   return p.size == TAMANHO_MAX;
 }
 
-inline bool vazia(const pilha &p)
+inline bool vazia(const Pilha &p)
 {
   return p.size == 0;
 }
@@ -31,7 +31,7 @@ inline bool vazia(const pilha &p)
 /* Adiciona um elemento ao topo da pilha
  * Retorna se a operação funcionou
  */
-inline bool empilha(pilha &p, Cor c)
+inline bool empilha(Pilha &p, Cor c)
 {
   if (cheia(p))
   {
@@ -46,7 +46,7 @@ inline bool empilha(pilha &p, Cor c)
 /* Remove o elemento do topo da pilha
  * Retorna se a operação funcionou
  */
-inline bool desempilha(pilha &p, Cor &c)
+inline bool desempilha(Pilha &p, Cor &c)
 {
   if (vazia(p))
   {

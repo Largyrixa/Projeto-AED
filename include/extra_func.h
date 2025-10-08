@@ -6,10 +6,10 @@
 #include "pilha.h"
 #include "cores.h"
 
-/* Transfere todos os primeiros elementos iguais da pilha 'a' para a pilha 'b'
+/* Transfere todos os primeiros elementos iguais da Pilha 'a' para a Pilha 'b'
  * Retorna se a operação deu certo
  */
-inline bool transferir_iguais(pilha &a, pilha &b)
+inline bool transferir_iguais(Pilha &a, Pilha &b)
 {
   if (vazia(a) || cheia(b))
   {
@@ -37,16 +37,16 @@ inline bool transferir_iguais(pilha &a, pilha &b)
 }
 
 
-/* Verifica se todos os elementos da pilha são iguais
+/* Verifica se todos os elementos da Pilha são iguais
  */
-inline bool todos_iguais(pilha &a)
+inline bool todos_iguais(Pilha &a)
 {
   if (vazia(a))
   {
     return false;
   }
 
-  pilha paux;
+  Pilha paux;
   cria(paux);
 
   Cor x, y;
