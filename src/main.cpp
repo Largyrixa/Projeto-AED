@@ -1,9 +1,9 @@
 // main.cpp
 
-#include "raylib.h"
 #include <iostream>
 #include <string.h>
 
+#include "raylib.h"
 #include "cores.h"
 #include "pilha.h"
 
