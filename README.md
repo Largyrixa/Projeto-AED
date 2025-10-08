@@ -13,7 +13,7 @@
 #### Passos para Compilar e Executar
 ```bash
 # 1. Clone o repositório e entre na pasta
-git clone https://github.com/Largyrixa/CoroteSort.git
+git clone https://github.com/Largyrixa/Projeto-AED.git
 cd CoroteSort
 
 # 2. Crie a pasta de build e configure o projeto
