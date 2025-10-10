@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "raylib.h"
-#include "cores.h"
 #include "pilha.h"
 #include "frasco.h"
 #include "extra_func.h"
@@ -16,7 +15,7 @@ const int LARGURA_TELA = 800;
 const int ALTURA_TELA = 600;
 
 const int CAPACIDADE_FRASCO = 4; // Cada frasco pode ter 4 unidades de líquido
-const int NUM_FRASCOS = 2;
+const int NUM_FRASCOS = 4;
 const int LARGURA_FRASCO = 80;
 const int ALTURA_FRASCO = 200;
 const int ALTURA_LIQUIDO = ALTURA_FRASCO / CAPACIDADE_FRASCO;
@@ -43,9 +42,16 @@ int main()
   }
 
   // Estado Inicial do Jogo (PARA O TESTE)
-  empilha(frascos[0].liquidos, AZUL);
-  empilha(frascos[0].liquidos, VERMELHO);
-  // Frasco 1 começa vazio
+  empilha(frascos[0].liquidos, RED);
+  empilha(frascos[0].liquidos, BLUE);
+  empilha(frascos[0].liquidos, BLUE);
+  empilha(frascos[0].liquidos, RED);
+  
+  empilha(frascos[1].liquidos, BLUE);
+  empilha(frascos[1].liquidos, RED);
+  empilha(frascos[1].liquidos, RED);
+  empilha(frascos[1].liquidos, BLUE);
+  // Frasco 2 começa vazio
 
   int frasco_origem = -1; // Índice do frasco selecionado para mover (-1 = nenhum)
 
@@ -89,39 +95,29 @@ int main()
       // Desenha os frascos e os líquidos
       for (auto& frasco : frascos)
       {
-        // Desenha a borda do frasco
-        // void DrawRectangleLinesEx(Rectangle rec, float lineThick, Color color)
-        DrawRectangleLinesEx(frasco.rect, 5, frasco.seleciondo ? GREEN : BLACK);
-
         // Desenha os líquidos dentro do frasco
         Pilha &p = frasco.liquidos;
         for (int i = 0; i < p.size; ++i) {
           // ATENÇÃO: MUDAR PARA LÓGICA "SEM ABRIR A TELEVISÃO"
-
-          Color cor_ray;
-
-          switch (p.info[i])
-          {
-            case VERMELHO:
-              cor_ray = RED;
-              break;  
-            case AZUL:
-              cor_ray = BLUE;
-              break;
-          }
-
+          
+          
           DrawRectangle(
             frasco.rect.x,
             frasco.rect.y + frasco.rect.height - (i + 1) * ALTURA_LIQUIDO,
             frasco.rect.width,
             ALTURA_LIQUIDO,
-            cor_ray
+            frasco.liquidos.info[i]
           );
         }
 
+        // Desenha a borda do frasco
+        // void DrawRectangleLinesEx(Rectangle rec, float lineThick, Color color)
+        DrawRectangleLinesEx(frasco.rect, 5, frasco.seleciondo ? GREEN : BLACK);
       }
     EndDrawing();
   }
+
+  CloseWindow();
 
   return 0;
 }

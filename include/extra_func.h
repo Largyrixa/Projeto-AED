@@ -4,32 +4,53 @@
 #define FUNC_H
 
 #include "pilha.h"
-#include "cores.h"
+#include "raylib.h"
+
+inline bool cores_sao_iguais(const Color &cor1, const Color &cor2)
+{
+  return cor1.r == cor2.r &&
+         cor1.g == cor2.g &&
+         cor1.b == cor2.b &&
+         cor1.a == cor2.a;
+}
+
+bool ver_topo (Pilha &p, Color &x)
+{
+  bool ok = desempilha(p, x);
+  if (!ok)
+    return false;
+
+  empilha(p, x);
+  return true;
+}
 
 /* Transfere todos os primeiros elementos iguais da Pilha 'a' para a Pilha 'b'
  * Retorna se a operação deu certo
  */
-inline bool transferir_iguais(Pilha &a, Pilha &b)
+bool transferir_iguais(Pilha &a, Pilha &b)
 {
   if (vazia(a) || cheia(b))
   {
     return false;
   }
 
-  Cor primeira, x;
-  bool okA = desempilha(a, primeira);
-  bool okB = empilha(b, primeira);
+  Color corBase, corTopo;
 
-  while (okA && okB)
+  ver_topo(a, corBase);
+
+  while(!vazia(a) && !cheia(b))
   {
-    okA = desempilha(a, x);
-    if (x == primeira)
+    ver_topo(a, corTopo);
+
+    if (cores_sao_iguais(corTopo, corBase))
     {
-      empilha(b, x);
+      Color corMovida;
+      desempilha(a, corMovida);
+      empilha(b, corMovida);
     }
     else
     {
-      break; // acabaram os iguais
+      break;
     }
   }
 
@@ -49,7 +70,7 @@ inline bool todos_iguais(Pilha &a)
   Pilha paux;
   cria(paux);
 
-  Cor x, y;
+  Color x, y;
   bool ok = desempilha(a, x);
   empilha(paux, x);
 
@@ -57,7 +78,7 @@ inline bool todos_iguais(Pilha &a)
   {
     ok = desempilha(a, y);
     empilha(paux, y);
-    if (x != y)
+    if (!cores_sao_iguais(x, y))
     {
       return false;
     }
@@ -75,5 +96,6 @@ inline bool todos_iguais(Pilha &a)
 
   return true;
 }
+
 
 #endif // FUNC_H

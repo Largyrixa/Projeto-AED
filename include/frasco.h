@@ -4,7 +4,6 @@
 #define _FRASCO_H
 
 #include "pilha.h"
-#include "cores.h"
 #include "raylib.h"
 
 struct Frasco

@@ -3,13 +3,13 @@
 #ifndef PILHA_H
 #define PILHA_H
 
-#define TAMANHO_MAX 10
+#define TAMANHO_MAX 9
 
-#include "cores.h"
+#include "raylib.h"
 
 struct Pilha
 {
-  Cor info[TAMANHO_MAX];
+  Color info[TAMANHO_MAX];
   unsigned char size;
 };
 
@@ -31,7 +31,7 @@ inline bool vazia(const Pilha &p)
 /* Adiciona um elemento ao topo da pilha
  * Retorna se a operação funcionou
  */
-inline bool empilha(Pilha &p, Cor c)
+inline bool empilha(Pilha &p, Color c)
 {
   if (cheia(p))
   {
@@ -46,7 +46,7 @@ inline bool empilha(Pilha &p, Cor c)
 /* Remove o elemento do topo da pilha
  * Retorna se a operação funcionou
  */
-inline bool desempilha(Pilha &p, Cor &c)
+inline bool desempilha(Pilha &p, Color &c)
 {
   if (vazia(p))
   {
