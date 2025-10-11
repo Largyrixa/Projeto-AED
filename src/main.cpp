@@ -33,12 +33,13 @@ int main()
   Frasco frascos[NUM_FRASCOS];
   for (int i = 0; i < NUM_FRASCOS; ++i)
   {
-    cria(frascos[i].liquidos);
-    frascos[i].rect.x = (LARGURA_TELA / (NUM_FRASCOS + 1)) * (i + 1) - (LARGURA_FRASCO / 2);
-    frascos[i].rect.y = ALTURA_TELA / 2 - ALTURA_FRASCO / 2;
-    frascos[i].rect.width = LARGURA_FRASCO;
-    frascos[i].rect.height = ALTURA_FRASCO;
-    frascos[i].seleciondo = false;
+    Rectangle rect;
+    rect.x = (LARGURA_TELA / (NUM_FRASCOS + 1)) * (i + 1) - (LARGURA_FRASCO / 2);
+    rect.y = ALTURA_TELA / 2 - ALTURA_FRASCO / 2;
+    rect.width = LARGURA_FRASCO;
+    rect.height = ALTURA_FRASCO;
+
+    cria(frascos[i], CAPACIDADE_FRASCO, rect);
   }
 
   // Estado Inicial do Jogo (PARA O TESTE)
@@ -79,7 +80,7 @@ int main()
             int frasco_destino = i;
             // Lógica de transferência
             if (frasco_origem != frasco_destino && !cheia(frascos[frasco_destino].liquidos)) {
-              transferir_iguais(frascos[frasco_origem].liquidos, frascos[frasco_destino].liquidos);
+              transferir_iguais(frascos[frasco_origem], frascos[frasco_destino]);
             }
             // Reseta a seleção, independente se o movimento foi válido ou não
             frascos[frasco_origem].seleciondo = false;

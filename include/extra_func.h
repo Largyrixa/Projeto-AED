@@ -27,26 +27,26 @@ bool ver_topo (Pilha &p, Color &x)
 /* Transfere todos os primeiros elementos iguais da Pilha 'a' para a Pilha 'b'
  * Retorna se a operação deu certo
  */
-bool transferir_iguais(Pilha &a, Pilha &b)
+inline bool transferir_iguais(Frasco &a, Frasco &b)
 {
-  if (vazia(a) || cheia(b))
+  if (vazio(a) || cheio(b))
   {
     return false;
   }
 
   Color corBase, corTopo;
 
-  ver_topo(a, corBase);
+  ver_topo(a.liquidos, corBase);
 
-  while(!vazia(a) && !cheia(b))
+  while(!vazio(a) && !cheio(b))
   {
-    ver_topo(a, corTopo);
+    ver_topo(a.liquidos, corTopo);
 
     if (cores_sao_iguais(corTopo, corBase))
     {
       Color corMovida;
-      desempilha(a, corMovida);
-      empilha(b, corMovida);
+      desempilha(a.liquidos, corMovida);
+      empilha(b.liquidos, corMovida);
     }
     else
     {
