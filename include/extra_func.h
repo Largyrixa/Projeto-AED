@@ -34,7 +34,7 @@ inline bool transferir_iguais(Frasco &a, Frasco &b)
     return false;
   }
 
-  Color corBase, corTopo;
+  Color corBase, corTopo; 
 
   ver_topo(a.liquidos, corBase);
 
@@ -95,6 +95,37 @@ inline bool todos_iguais(Pilha &a)
   }
 
   return true;
+}
+
+void desenhar_liquidos(Frasco &f, const int ALTURA_LIQUIDO)
+{
+  Color cor_liquido;
+  int nivel_liquido = 0;
+
+  Pilha passis;
+  cria(passis);
+
+  while(!vazia(f.liquidos))
+  {
+    desempilha(f.liquidos, cor_liquido);
+    empilha(passis, cor_liquido);
+
+    DrawRectangle(
+      f.rect.x,
+      f.rect.y + f.rect.height - (nivel_liquido + 1) * ALTURA_LIQUIDO,
+      f.rect.width,
+      ALTURA_LIQUIDO,
+      f.liquidos.info[nivel_liquido]
+    );
+
+    nivel_liquido++;
+  }
+
+  while(!vazia(passis))
+  {
+    desempilha(passis, cor_liquido);
+    empilha(f.liquidos, cor_liquido);
+  }
 }
 
 

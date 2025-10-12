@@ -96,21 +96,8 @@ int main()
       // Desenha os frascos e os líquidos
       for (auto& frasco : frascos)
       {
-        // Desenha os líquidos dentro do frasco
-        Pilha &p = frasco.liquidos;
-        for (int i = 0; i < p.size; ++i) {
-          // ATENÇÃO: MUDAR PARA LÓGICA "SEM ABRIR A TELEVISÃO"
-          
-          
-          DrawRectangle(
-            frasco.rect.x,
-            frasco.rect.y + frasco.rect.height - (i + 1) * ALTURA_LIQUIDO,
-            frasco.rect.width,
-            ALTURA_LIQUIDO,
-            frasco.liquidos.info[i]
-          );
-        }
-
+      desenhar_liquidos(frasco,ALTURA_LIQUIDO);
+      
         // Desenha a borda do frasco
         // void DrawRectangleLinesEx(Rectangle rec, float lineThick, Color color)
         DrawRectangleLinesEx(frasco.rect, 5, frasco.seleciondo ? GREEN : BLACK);

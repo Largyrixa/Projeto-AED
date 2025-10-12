@@ -19,6 +19,8 @@ FetchContent_Declare(
   GIT_PROGRESS TRUE
 )
 
+set(PLATFORM Desktop CACHE STRING "" FORCE)
+
 FetchContent_MakeAvailable(raylib)
 
 # Adicionar os arquivos fonte
