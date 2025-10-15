@@ -115,7 +115,7 @@ void desenhar_liquidos(Frasco &f, const int ALTURA_LIQUIDO)
       f.rect.y + f.rect.height - (nivel_liquido + 1) * ALTURA_LIQUIDO,
       f.rect.width,
       ALTURA_LIQUIDO,
-      f.liquidos.info[nivel_liquido]
+      cor_liquido
     );
 
     nivel_liquido++;
