@@ -1,6 +1,6 @@
 # Arquitetura Do Sistema
 
-**Dificuldade:** Média (requer organização)
+**Dificuldade:** Fácil (requer organização)
 
 - [x] Configurar o projeto inicial: Criar o `CMakeLists.txt` para compilar C com Raylib.
 
