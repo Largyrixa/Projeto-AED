@@ -7,11 +7,7 @@
 
 #include "logic.h"
 
-typedef struct Node
-{
-  char BoardState;
-  struct Node *Sons[MAX_SONS];
-} GameTree;
+typedef struct Node GameTree;
 
 void InitTree(GameTree *root);
 void AddNode(GameTree *root, char BoardState, int index);

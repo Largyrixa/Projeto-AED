@@ -2,7 +2,13 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-void InitTree(GameTree *root)
+struct Node
+{
+  char BoardState;
+  struct Node *Sons[MAX_SONS];
+}
+
+InitTree(GameTree *root)
 {
   root = NULL;
 }
