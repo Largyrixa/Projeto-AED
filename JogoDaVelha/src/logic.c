@@ -15,8 +15,8 @@ void InitBoard(Board *b){
     }
 }
 
-/* ------ Checa se um jogador ganhou a partida. ----- */
-char CheckWin(Board b){
+/* ------ Checa se um jogador ganhou a partida ou se houve empate. ----- */
+char BoardState(Board b){
 
     // Matriz de possíveis vitórias conforme as posições ocupadas.
     const int wins[8][3] = {
@@ -31,15 +31,27 @@ char CheckWin(Board b){
     };
 
     // Loop que percorre as possibilidades de vitória.
-    for(int i = 0; i < 9 ; i++){
+    for(int i = 0; i < 8 ; i++){
         
         int s1 = wins[i][0];
         int s2 = wins[i][1];
         int s3 = wins[i][2]; 
 
-        if(b.info[s1] != ' ' && b.info[s1] == b.info[s2] && b.info[s2] == b.info[s3]){
-            return 'V';
+        if(b.info[s1] == 'X' && b.info[s1] == b.info[s2] && b.info[s2] == b.info[s3]){
+            return 'X';
+        }
+        else if(b.info[s1] == 'O' && b.info[s1] == b.info[s2] && b.info[s2] == b.info[s3]){
+            return 'O';
         }
     }
-    return ' ';
+
+    // Verifica se há espaços disponíveis no tabuleiro.
+    for(int i = 0 ; i < 9 ; i++){
+        if(b.info[i] == ' '){
+            return 'N';
+        }
+    }
+
+    // Caso todos os espaços estejam ocupados, deu empate.
+    return 'E';
 }

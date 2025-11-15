@@ -8,8 +8,7 @@
 typedef struct Board Board;
 
 void InitBoard(Board *b);
-char CheckWin(Board b);
-char CheckDraw(Board b);
+char BoardState(Board b);
 bool MakeMove(Board b, int x, int y);
 char GetBoardCell(Board b, int x, int y);
 
