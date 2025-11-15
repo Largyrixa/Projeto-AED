@@ -6,9 +6,7 @@
 
 - [x] Criar a `struct Board`
 
-- [ ] Implementar a função `CheckWin(Board b)`: Verifica se alguém ganhou
-
-- [ ] Implementar a função `CheckDraw(Board b)`: Verifica se deu velha
+- [x] Implementar a função `BoardState(Board b)`: Verifica se alguém ganhou ou se houve empate.
 
 - [ ] Implementar a função `MakeMove(Board b, int x, int y)`: Atualiza o estado da matriz
 
