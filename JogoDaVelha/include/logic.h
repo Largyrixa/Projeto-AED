@@ -16,7 +16,8 @@ char GetBoardCell(Board b, int x, int y);
 
 //---Dificulty-------------------------------------
 
-typedef enum {
+typedef enum
+{
   Easy,
   Medium,
   Hard,
