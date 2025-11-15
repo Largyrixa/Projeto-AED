@@ -5,6 +5,7 @@
 struct Node
 {
   char BoardState;
+  char Player;
   struct Node *Sons[MAX_SONS];
 };
 

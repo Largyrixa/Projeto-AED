@@ -7,6 +7,12 @@
 
 #include "logic.h"
 
+/*
+ Essa árvore funciona da seguinte forma:
+ - Armazena o estado atual do tabuleiro em 'BoardState'
+ - Armazena o player atual em 'Player'
+ - Cada index de 'Sons' traduz para uma jogada no tabuleiro, por isso 9
+*/
 typedef struct Node GameTree;
 
 void InitTree(GameTree *root);
