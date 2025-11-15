@@ -4,7 +4,7 @@
 
 - [x] Configurar o projeto inicial: Criar o `CMakeLists.txt` para compilar C com Raylib.
 
-- [ ] Criar a `struct Board`
+- [x] Criar a `struct Board`
 
 - [ ] Implementar a função `CheckWin(Board b)`: Verifica se alguém ganhou
 
