@@ -6,7 +6,7 @@
 
 - [x] Criar a `struct Board`
 
-- [ ] Implementar a função `CheckWin(Board b)`: Verifica se alguém ganhou
+- [x] Implementar a função `CheckWin(Board b)`: Verifica se alguém ganhou
 
 - [ ] Implementar a função `CheckDraw(Board b)`: Verifica se deu velha
 

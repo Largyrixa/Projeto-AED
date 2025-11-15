@@ -5,13 +5,11 @@
 
 //---Board-----------------------------------------
 
-typedef struct Board
-{
-  char info[9];
-} Board;
+typedef struct Board Board;
 
 void InitBoard(Board *b);
 char CheckWin(Board b);
+char CheckDraw(Board b);
 bool MakeMove(Board b, int x, int y);
 char GetBoardCell(Board b, int x, int y);
 
