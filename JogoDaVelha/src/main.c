@@ -3,26 +3,26 @@
 #include "logic.h"
 #include "render.h"
 #include "raylib.h"
-#include "ai.h" 
+#include "ai.h"
 
-int main() 
+int main()
 {
-    // Inicialização da janela do jogo.
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
-    SetTargetFPS(60);
+  // Inicialização da janela do jogo.
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
+  SetTargetFPS(60);
 
-    // Loop principal do jogo.
-    while(!WindowShouldClose())
-    {
-        BeginDrawing();
+  // Loop principal do jogo.
+  while (!WindowShouldClose())
+  {
+    BeginDrawing();
 
-            ClearBackground(RAYWHITE);
-            DrawGameGrid();
+    ClearBackground(RAYWHITE);
+    DrawGameGrid();
 
-        EndDrawing();
-    }
+    EndDrawing();
+  }
 
-    CloseWindow();
+  CloseWindow();
 
-    return 0;
+  return 0;
 }
