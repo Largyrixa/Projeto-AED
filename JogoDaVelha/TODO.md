@@ -37,7 +37,7 @@
 
 - [ ] Implementar o **Game Loop** principal (While (!WindowShouldClose))
 
-- [ ] Criar o sistema de conversão: Transformar o o clique do mouse em coordenadas da matriz.
+- [x] Criar o sistema de conversão: Transformar o o clique do mouse em coordenadas da matriz.
 
 - [ ] Criar o **Menu Inicial**: Botões para selecionar a dificuldade e botão "Jogar"
 
