@@ -11,26 +11,29 @@ int main()
 {
   // Inicialização da janela do jogo.
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
+
+  Texture2D textureX = LoadTexture("assets/x.png");
+  Texture2D textureO = LoadTexture("assets/o.png");
+
   SetTargetFPS(60);
 
-  Board* myBoard;
+  Board myBoard;
   InitBoard(&myBoard);
   char current_player = 'X';
 
   // Loop principal do jogo.
   while (!WindowShouldClose())
   {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    Vector2 ClickBoardPos;
+    if (GetClickBoardPos(&ClickBoardPos))
     {
-      Vector2 posMouse = GetMousePosition();
-      int x_board = (int)posMouse.x / (SCREEN_WIDTH /4);
-      int y_board = (int)posMouse.y / (SCREEN_HEIGHT/4);
+      printf("Clique: (%d, %d)\n", (int)ClickBoardPos.x, (int)ClickBoardPos.y);
 
-      bool valid_move = MakeMove(&myBoard,x_board,y_board,current_player);
+      bool valid_move = MakeMove(&myBoard, (int)ClickBoardPos.x, (int)ClickBoardPos.y, current_player);
 
       if (valid_move)
       {
-        if ( current_player == 'X') current_player = 'O';
+        if  (current_player == 'X') current_player = 'O';
         else current_player =  'X';
       }
     }
@@ -39,15 +42,13 @@ int main()
 
     ClearBackground(RAYWHITE);
     DrawGameGrid();
-
-    Vector2 ClickBoardPos;
-    if (GetClickBoardPos(&ClickBoardPos))
-    {
-      printf("Clique: (%d, %d)\n", (int)ClickBoardPos.x, (int)ClickBoardPos.y);
-    }
+    DrawBoard(myBoard, textureX, textureO);
 
     EndDrawing();
   }
+
+  UnloadTexture(textureX);
+  UnloadTexture(textureO);
 
   CloseWindow();
 

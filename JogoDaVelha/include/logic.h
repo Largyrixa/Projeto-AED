@@ -5,7 +5,10 @@
 
 //---Board-----------------------------------------
 
-typedef struct Board Board;
+typedef struct Board
+{
+  char info[9];
+} Board;
 
 void InitBoard(Board *b);
 char BoardState(Board b);

@@ -8,7 +8,7 @@
 
 - [x] Implementar a função `BoardState(Board b)`: Verifica se alguém ganhou ou se houve empate.
 
-- [ ] Implementar a função `MakeMove(Board b, int x, int y)`: Atualiza o estado da matriz
+- [x] Implementar a função `MakeMove(Board b, int x, int y)`: Atualiza o estado da matriz
 
 # IA / Bot
 
@@ -25,7 +25,7 @@
 
 - [x] Desenhar o Grid (o tabuleiro #) na tela.
 
-- [ ] Criar funções `DrawX(int x, int y)` e `DrawO(int x, int y)` com cores e estilos diferentes (ou ainda com imagens aleatórias pra ficar engraçado sei lakkkk)
+- [x] Criar funções `DrawX(int x, int y)` e `DrawO(int x, int y)` com cores e estilos diferentes (ou ainda com imagens aleatórias pra ficar engraçado sei lakkkk)
 
 - [ ] Criar a tela de "Game Over" (Mostrar quem ganhou e instrução para reiniciar).
 
