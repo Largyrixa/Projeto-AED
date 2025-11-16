@@ -3,7 +3,10 @@
 
 #include "logic.h"
 
-void DrawGrid();
+#define SCREEN_WIDTH  600
+#define SCREEN_HEIGHT 600
+
+void DrawGameGrid();
 void DrawX(int x, int y);
 void DrawO(int x, int y);
 void DrawBoard(Board b);
