@@ -190,7 +190,7 @@ GameTree *FindGameTree(Board b, char Player)
       if (IsValidMove(b, i % 3, i / 3))
       {
         Board b_copy = b;
-        MakeMove(b_copy, i % 3, i / 3);
+        MakeMove(&b_copy, i % 3, i / 3, Player);
 
         char NextPlayer = (Player == 'O') ? 'X' : 'O';
 

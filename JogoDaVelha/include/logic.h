@@ -12,7 +12,7 @@ typedef struct Board
 
 void InitBoard(Board *b);
 char BoardState(Board b);
-bool IsValidMove (Board b, int x, int y, char player);
+bool IsValidMove (Board b, int x, int y);
 bool MakeMove(Board *b, int x, int y, char player);
 char GetBoardCell(Board b, int x, int y);
 
