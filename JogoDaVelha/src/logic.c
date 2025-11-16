@@ -60,3 +60,9 @@ char BoardState(Board b)
   // Caso todos os espaços estejam ocupados, deu empate.
   return 'E';
 }
+
+bool IsValidMove(Board b, int x, int y)
+{
+  int index = y * 3 + x;
+  return b.info[index] == ' ';
+}
