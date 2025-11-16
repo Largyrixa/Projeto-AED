@@ -195,8 +195,6 @@ GameTree *FindGameTree(Board b, char Player)
         char NextPlayer = (Player == 'O') ? 'X' : 'O';
 
         current->Sons[i] = FindGameTree(b, NextPlayer);
-
-        UnmakeMove(b, i % 3, i / 3);
       }
     }
   }
