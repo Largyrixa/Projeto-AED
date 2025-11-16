@@ -3,8 +3,8 @@
 
 const int cell_size = SCREEN_WIDTH / 3;
 
-void DrawGameGrid(){
-
+void DrawGameGrid()
+{
     // DrawLine(startX, startY, endX, endY, color);
 
     // Linhas verticais
