@@ -16,7 +16,7 @@
 
 - [x] Definir a `struct Node`: Deve representar um estado do tabuleiro e ter ponteiros para os filhos (jogadas futuras).
 
-- [ ] Criar a função `GetMove(Board b, Dificulty d)`: Utiliza uma versão modificada do minimax, no qual existe uma chance de fazer uma jogada propositalmente ruim (a depender da dificuldade).
+- [x] Criar a função `GetMove(Board b, Dificulty d)`: Utiliza uma versão modificada do minimax, no qual existe uma chance de fazer uma jogada propositalmente ruim (a depender da dificuldade).
 
 
 # Motor Gráfico (Raylib)
