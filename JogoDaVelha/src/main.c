@@ -1,3 +1,4 @@
+#include <stdio.h>
 
 #include "input.h"
 #include "logic.h"
@@ -18,6 +19,12 @@ int main()
 
     ClearBackground(RAYWHITE);
     DrawGameGrid();
+
+    Vector2 ClickBoardPos;
+    if (GetClickBoardPos(&ClickBoardPos))
+    {
+      printf("Clique: (%d, %d)\n", (int)ClickBoardPos.x, (int)ClickBoardPos.y);
+    }
 
     EndDrawing();
   }
