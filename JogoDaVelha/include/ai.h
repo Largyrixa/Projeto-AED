@@ -15,8 +15,17 @@
 */
 typedef struct Node GameTree;
 
+/*
+  Cria uma nóva Game Tree dinamicamente alocada:
+  @param BoardState: Estado do tabuleiro na árvore atual
+  @param Player: Player do tabuleiro atual
+*/
 GameTree *CreateTree(char BoardState, char Player);
-bool AddNode(GameTree *root, char BoardState, int index);
+
+/*
+  Calcula o movimento do bot conforme a dificuldade por meio de uma árvore de possibilidades 'GameTree'
+  Basicamente uma versão com diferentes dificuldades do minmax
+*/
 int GetMove(Board b, Dificulty d);
 void FreeTree(GameTree *root);
 
