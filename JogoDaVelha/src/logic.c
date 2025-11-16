@@ -56,6 +56,12 @@ char BoardState(Board b)
   return 'E';
 }
 
+bool IsValidMove(Board b, int x, int y)
+{
+  int index = y * 3 + x;
+  return index >= 0 && index < 9 && b.info[index] == ' ';
+}
+
 /* ------ Realiza um movimento do jogador atual. ----- */
 bool MakeMove(Board *b, int x, int y, char player){
 

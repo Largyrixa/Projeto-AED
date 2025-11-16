@@ -7,8 +7,12 @@
 #include "ai.h"
 #include <stdbool.h>
 
+#include <stdlib.h>
+#include <time.h>
+
 int main()
 {
+  srand(time(NULL));
   // Inicialização da janela do jogo.
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
 
