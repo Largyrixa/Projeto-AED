@@ -1,7 +1,6 @@
 #include "render.h"
 #include "raylib.h"
 
-
 void DrawGameGrid()
 {
   // DrawLine(startX, startY, endX, endY, color);
