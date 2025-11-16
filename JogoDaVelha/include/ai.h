@@ -15,8 +15,8 @@
 */
 typedef struct Node GameTree;
 
-void InitTree(GameTree *root);
-void AddNode(GameTree *root, char BoardState, int index);
+GameTree *CreateTree(char BoardState, char Player);
+bool AddNode(GameTree *root, char BoardState, int index);
 int GetMove(Board b, Dificulty d);
 void FreeTree(GameTree *root);
 
