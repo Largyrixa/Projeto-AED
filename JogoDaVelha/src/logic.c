@@ -1,11 +1,6 @@
 #include "logic.h"
 #include <stdbool.h>
 
-struct Board
-{
-  char info[9];
-};
-
 /* ----- Inicializa o tabuleiro com todas as posições "desocupadas" (' '). ----- */
 void InitBoard(Board *b)
 {
@@ -60,3 +55,36 @@ char BoardState(Board b)
   // Caso todos os espaços estejam ocupados, deu empate.
   return 'E';
 }
+
+/* ------ Realiza um movimento do jogador atual. ----- */
+bool MakeMove(Board *b, int x, int y, char player){
+
+  // Conversão de coordenada 2D para 1D (vetor 0-8)
+  int pos = y * 3 + x;
+
+  // Verifica se a posição do tabuleiro é válida.
+  if (pos >= 0 && pos < 9 && b->info[pos] == ' ')
+  {
+    // O jogador ocupa a posição e a função retorna 'true'.
+    b->info[pos] = player;
+    return true;
+  }
+
+  // Em caso inválido, retorna falso.
+  return false;
+}
+
+/* ----- Retorna o conteúdo de uma célula ----- */
+char GetBoardCell(Board b, int x, int y){
+  
+  int pos = y * 3 + x;
+
+  if (pos >= 0 && pos < 9)
+  {
+    return b.info[pos];
+  }
+
+  // Retorna '?' se as coordenadas são inválidas.
+  return '?';
+}
+
