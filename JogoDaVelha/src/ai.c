@@ -65,7 +65,7 @@ int FindRandomMove(Board b)
   if (len == 0)
     return -1;
 
-  return valid[GetRandomValue(0, len)];
+  return valid[GetRandomValue(0, len-1)];
 }
 
 int GetMove(Board b, char CurrPlayer, Dificulty d)
