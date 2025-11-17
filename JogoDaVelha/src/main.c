@@ -32,6 +32,7 @@ int main()
 
   SetTargetFPS(60);
 
+  restart:
   Board myBoard;
   InitBoard(&myBoard);
   char current_player = 'X';
@@ -66,6 +67,11 @@ int main()
       PlaySound(soundO);
       current_player = (current_player == 'X') ? 'O' : 'X';
       CurrentBoardState = BoardState(myBoard);
+    }
+
+    if (GetKeyPressed() == KEY_ENTER)
+    {
+      goto restart;
     }
 
     BeginDrawing();
