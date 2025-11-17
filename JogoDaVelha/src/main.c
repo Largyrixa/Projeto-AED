@@ -18,6 +18,9 @@
 const char texXPath[] = ASSETS_PATH "x.png";
 const char texOPath[] = ASSETS_PATH "o.png";
 
+const char soundXPath[] = ASSETS_PATH "bazinga.wav";
+const char soundOPath[] = ASSETS_PATH "ondascerebrais.wav";
+
 int main()
 {
   srand(time(NULL));
@@ -28,8 +31,8 @@ int main()
   Texture2D textureX = LoadTexture(texXPath);
   Texture2D textureO = LoadTexture(texOPath);
 
-  Sound soundX = LoadSound("assets/bazinga.wav");
-  Sound soundO = LoadSound("assets/ondascerebrais.wav");
+  Sound soundX = LoadSound(soundXPath);
+  Sound soundO = LoadSound(soundOPath);
 
   SetTargetFPS(60);
 
@@ -51,15 +54,17 @@ int main()
 
         bool valid_move = MakeMove(&myBoard, (int)ClickBoardPos.x, (int)ClickBoardPos.y, current_player);
 
-      if (valid_move)
-      {
-        PlaySound(soundX);
-        current_player = 'O';
-        CurrentBoardState = BoardState(myBoard);
+        if (valid_move)
+        {
+          PlaySound(soundX);
+          current_player = 'O';
+          CurrentBoardState = BoardState(myBoard);
+        }
       }
     }
     else if (current_player == 'O' && CurrentBoardState == 'N')
     {
+      WaitTime(0.5);
       int move = GetMove(myBoard, 'O', d);
       MakeMove(&myBoard, move % 3, move / 3, 'O');
       PlaySound(soundO);
@@ -70,8 +75,8 @@ int main()
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
-    DrawGameGrid();
     DrawBoard(myBoard, textureX, textureO);
+    DrawGameGrid();
 
     EndDrawing();
   }
