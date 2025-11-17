@@ -12,7 +12,7 @@
 #include <string.h>
 
 #ifndef ASSETS_PATH // definição do próprio CMake
-  #define ASSETS_PATH "assets/"
+#define ASSETS_PATH "assets/"
 #endif
 
 const char texXPath[] = ASSETS_PATH "x.png";
@@ -32,21 +32,34 @@ int main()
   Board myBoard;
   InitBoard(&myBoard);
   char current_player = 'X';
+  Dificulty d = Easy;
 
+  char CurrentBoardState = 'N';
   // Loop principal do jogo.
   while (!WindowShouldClose())
   {
     Vector2 ClickBoardPos;
-    if (GetClickBoardPos(&ClickBoardPos))
+    if (current_player == 'X' && CurrentBoardState == 'N')
     {
-      printf("Clique: (%d, %d)\n", (int)ClickBoardPos.x, (int)ClickBoardPos.y);
-
-      bool valid_move = MakeMove(&myBoard, (int)ClickBoardPos.x, (int)ClickBoardPos.y, current_player);
-
-      if (valid_move)
+      if (GetClickBoardPos(&ClickBoardPos))
       {
-        current_player = (current_player == 'X') ? 'O' : 'X';
+        printf("Clique: (%d, %d)\n", (int)ClickBoardPos.x, (int)ClickBoardPos.y);
+
+        bool valid_move = MakeMove(&myBoard, (int)ClickBoardPos.x, (int)ClickBoardPos.y, current_player);
+
+        if (valid_move)
+        {
+          current_player = (current_player == 'X') ? 'O' : 'X';
+          CurrentBoardState = BoardState(myBoard);
+        }
       }
+    }
+    else if (current_player == 'O' && CurrentBoardState == 'N')
+    {
+      int move = GetMove(myBoard, 'O', d);
+      MakeMove(&myBoard, move % 3, move / 3, 'O');
+      current_player = (current_player == 'X') ? 'O' : 'X';
+      CurrentBoardState = BoardState(myBoard);
     }
 
     BeginDrawing();
