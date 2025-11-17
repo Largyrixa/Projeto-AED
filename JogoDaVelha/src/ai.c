@@ -40,7 +40,7 @@ void FreeTree(GameTree *root)
 }
 
 #define EASY_ERROR_CHANCE 60  // %
-#define MEDIUM_ERROR_CHANCE 20 // %
+#define MEDIUM_ERROR_CHANCE 25 // %
 #define HARD_ERROR_CHANCE 0    // %
 
 #define MIN(N1, N2) ((N1 < N2) ? N1 : N2)
@@ -49,13 +49,13 @@ void FreeTree(GameTree *root)
 GameTree *FindGameTree(Board b, char Player);
 int MinMax(GameTree *root, char Player);
 
-int FindRandomMove(Board b)
+int FindRandomMove(Board b, int BestMove)
 {
   int valid[9];
   int len = 0;
   for (int i = 0; i < 9; i++)
   {
-    if (IsValidMove(b, i % 3, i / 3))
+    if (IsValidMove(b, i % 3, i / 3) && i != BestMove)
     {
       valid[len] = i;
       len++;
@@ -63,7 +63,7 @@ int FindRandomMove(Board b)
   }
 
   if (len == 0)
-    return -1;
+    return BestMove;
 
   return valid[GetRandomValue(0, len-1)];
 }
@@ -100,18 +100,18 @@ int GetMove(Board b, char CurrPlayer, Dificulty d)
   switch (d)
   {
   case Easy:
-    if (chance <= EASY_ERROR_CHANCE)
-      BestMove = FindRandomMove(b);
+    if (chance < EASY_ERROR_CHANCE)
+      BestMove = FindRandomMove(b, BestMove);
     break;
 
   case Medium:
-    if (chance <= MEDIUM_ERROR_CHANCE)
-      BestMove = FindRandomMove(b);
+    if (chance < MEDIUM_ERROR_CHANCE)
+      BestMove = FindRandomMove(b, BestMove);
     break;
 
   case Hard:
-    if (chance <= HARD_ERROR_CHANCE)
-      BestMove = FindRandomMove(b);
+    if (chance < HARD_ERROR_CHANCE)
+      BestMove = FindRandomMove(b, BestMove);
     break;
   }
   return BestMove;
