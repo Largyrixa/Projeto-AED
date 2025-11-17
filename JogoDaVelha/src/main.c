@@ -7,7 +7,6 @@
 #include "ai.h"
 
 #include <stdbool.h>
-#include <time.h>
 
 #ifndef ASSETS_PATH // definição do próprio CMake
 #define ASSETS_PATH "assets/"
@@ -25,7 +24,6 @@ int main()
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
   InitAudioDevice();
   
-  SetRandomSeed(time(NULL));
   Texture2D textureX = LoadTexture(texXPath);
   Texture2D textureO = LoadTexture(texOPath);
 
