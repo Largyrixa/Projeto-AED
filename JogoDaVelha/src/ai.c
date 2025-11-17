@@ -20,6 +20,8 @@ GameTree *CreateTree(char BoardState, char Player)
   {
     NewTree->Sons[i] = NULL;
   }
+
+  return NewTree;
 }
 
 bool AddNode(GameTree *root, char BoardState, int index)
@@ -59,12 +61,7 @@ void FreeTree(GameTree *root)
   free(root);
 }
 
-struct Board
-{
-  char info[9];
-};
-
-#define EASY_ERROR_CHANCE 70   // %
+#define EASY_ERROR_CHANCE 60  // %
 #define MEDIUM_ERROR_CHANCE 20 // %
 #define HARD_ERROR_CHANCE 0    // %
 
@@ -74,24 +71,33 @@ struct Board
 GameTree *FindGameTree(Board b, char Player);
 int MinMax(GameTree *root, char Player);
 
-#define FIND_RANDOM_MOVE()              \
-  {                                     \
-    int valid[9];                       \
-    int len = 0;                        \
-    for (int i = 0; i < 9; i++)         \
-    {                                   \
-      if (IsValidMove(b, i % 3, i / 3)) \
-      {                                 \
-        valid[len] = i;                 \
-        len++;                          \
-      }                                 \
-    }                                   \
-    BestMove = valid[rand() % len];     \
+int FindRandomMove(Board b)
+{
+  int valid[9];
+  int len = 0;
+  for (int i = 0; i < 9; i++)
+  {
+    if (IsValidMove(b, i % 3, i / 3))
+    {
+      valid[len] = i;
+      len++;
+    }
   }
+
+  if (len == 0)
+    return -1;
+
+  return valid[rand() % len];
+}
 
 int GetMove(Board b, char CurrPlayer, Dificulty d)
 {
   GameTree *root = FindGameTree(b, CurrPlayer);
+
+  if (root->BoardState != 'N')
+  {
+    return -1;
+  }
 
   int move;
   int BestScore = -2;
@@ -117,17 +123,17 @@ int GetMove(Board b, char CurrPlayer, Dificulty d)
   {
   case Easy:
     if (chance <= EASY_ERROR_CHANCE)
-      FIND_RANDOM_MOVE();
+      BestMove = FindRandomMove(b);
     break;
 
   case Medium:
     if (chance <= MEDIUM_ERROR_CHANCE)
-      FIND_RANDOM_MOVE();
+      BestMove = FindRandomMove(b);
     break;
 
   case Hard:
     if (chance <= HARD_ERROR_CHANCE)
-      FIND_RANDOM_MOVE();
+      BestMove = FindRandomMove(b);
     break;
   }
   return BestMove;
@@ -183,7 +189,7 @@ GameTree *FindGameTree(Board b, char Player)
 {
   GameTree *current = CreateTree(BoardState(b), Player);
 
-  if (current->BoardState == ' ')
+  if (current->BoardState == 'N')
   {
     for (int i = 0; i < 9; i++)
     {
@@ -194,7 +200,7 @@ GameTree *FindGameTree(Board b, char Player)
 
         char NextPlayer = (Player == 'O') ? 'X' : 'O';
 
-        current->Sons[i] = FindGameTree(b, NextPlayer);
+        current->Sons[i] = FindGameTree(b_copy, NextPlayer);
       }
     }
   }

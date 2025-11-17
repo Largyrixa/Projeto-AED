@@ -49,4 +49,4 @@
 
 - [x] Implementar `FreeTree(Node *root)`: Uma função recursiva para dar `free` em todos os nós ta árvore após a jogada da IA (evitar memory leak)
 
-- [ ] Implementar `UnloadResources()`: Chamar `UnloadTexture` e `UnloadSound` antes de fechar o jogo
+- [x] Implementar `UnloadResources()`: Chamar `UnloadTexture` e `UnloadSound` antes de fechar o jogo
