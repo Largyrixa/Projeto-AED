@@ -5,10 +5,18 @@
 #include "render.h"
 #include "raylib.h"
 #include "ai.h"
-#include <stdbool.h>
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+
+#ifndef ASSETS_PATH // definição do próprio CMake
+  #define ASSETS_PATH "assets/"
+#endif
+
+const char texXPath[] = ASSETS_PATH "x.png";
+const char texOPath[] = ASSETS_PATH "o.png";
 
 int main()
 {
@@ -16,8 +24,8 @@ int main()
   // Inicialização da janela do jogo.
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
 
-  Texture2D textureX = LoadTexture("assets/x.png");
-  Texture2D textureO = LoadTexture("assets/o.png");
+  Texture2D textureX = LoadTexture(texXPath);
+  Texture2D textureO = LoadTexture(texOPath);
 
   SetTargetFPS(60);
 
@@ -37,8 +45,7 @@ int main()
 
       if (valid_move)
       {
-        if  (current_player == 'X') current_player = 'O';
-        else current_player =  'X';
+        current_player = (current_player == 'X') ? 'O' : 'X';
       }
     }
 

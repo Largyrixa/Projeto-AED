@@ -59,11 +59,6 @@ void FreeTree(GameTree *root)
   free(root);
 }
 
-struct Board
-{
-  char info[9];
-};
-
 #define EASY_ERROR_CHANCE 70   // %
 #define MEDIUM_ERROR_CHANCE 20 // %
 #define HARD_ERROR_CHANCE 0    // %
