@@ -12,7 +12,7 @@
 #include <string.h>
 
 #ifndef ASSETS_PATH // definição do próprio CMake
-  #define ASSETS_PATH "/assets/"
+  #define ASSETS_PATH "assets/"
 #endif
 
 const char texXPath[] = ASSETS_PATH "x.png";
@@ -45,16 +45,7 @@ int main()
 
       if (valid_move)
       {
-        
-        if (current_player == 'X')
-        {
-          DrawX(ClickBoardPos.x, ClickBoardPos.y, textureX);
-          current_player = 'O';
-        }
-        else {
-          DrawO(ClickBoardPos.x, ClickBoardPos.y, textureO);
-          current_player = 'X';
-        }
+        current_player = (current_player == 'X') ? 'O' : 'X';
       }
     }
 
