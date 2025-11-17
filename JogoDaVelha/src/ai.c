@@ -1,6 +1,7 @@
 #include "ai.h"
 #include "logic.h"
 #include "raylib.h"
+#include <stdlib.h>
 
 #include <stddef.h>
 
