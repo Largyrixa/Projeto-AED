@@ -7,12 +7,12 @@ void DrawGameGrid()
   // DrawLine(startX, startY, endX, endY, color);
 
   // Linhas verticais
-  DrawLine(CELL_SIZE, 0, CELL_SIZE, SCREEN_HEIGHT, DARKGRAY);
-  DrawLine(2 * CELL_SIZE, 0, 2 * CELL_SIZE, SCREEN_HEIGHT, DARKGRAY);
+  DrawLine(BOARD_OFFSET_X +     CELL_SIZE, BOARD_OFFSET_Y, BOARD_OFFSET_X +     CELL_SIZE, BOARD_OFFSET_Y + BOARD_SIZE, DARKGRAY);
+  DrawLine(BOARD_OFFSET_X + 2 * CELL_SIZE, BOARD_OFFSET_Y, BOARD_OFFSET_X + 2 * CELL_SIZE, BOARD_OFFSET_Y + BOARD_SIZE, DARKGRAY);
 
   // Linhas horizontais
-  DrawLine(0, CELL_SIZE, SCREEN_WIDTH, CELL_SIZE, DARKGRAY);
-  DrawLine(0, 2 * CELL_SIZE, SCREEN_WIDTH, 2 * CELL_SIZE, DARKGRAY);
+  DrawLine(BOARD_OFFSET_X, BOARD_OFFSET_Y +     CELL_SIZE, BOARD_OFFSET_X + BOARD_SIZE, BOARD_OFFSET_Y +     CELL_SIZE, DARKGRAY);
+  DrawLine(BOARD_OFFSET_X, BOARD_OFFSET_Y + 2 * CELL_SIZE, BOARD_OFFSET_X + BOARD_SIZE, BOARD_OFFSET_Y + 2 * CELL_SIZE, DARKGRAY);
 }
 
 /* ----- Desenha o jogador X ----- */
@@ -25,8 +25,8 @@ void DrawX(int x, int y, Texture2D tex){
   double scale = (double)CELL_SIZE / (double)tex.width * scale_ajust;
 
   // Calcula a posição dos pixels
-  int pixel_x = x * CELL_SIZE;
-  int pixel_y = y * CELL_SIZE;
+  int pixel_x = (x * CELL_SIZE) + BOARD_OFFSET_X;
+  int pixel_y = (y * CELL_SIZE) + BOARD_OFFSET_Y;
 
   // !! CENTRALIZAÇÃO DO SHELDON !!
   double image_swidth  = tex.width  * scale;
@@ -45,8 +45,8 @@ void DrawO(int x, int y, Texture2D tex){
   
   double scale = (double)CELL_SIZE / (double)tex.width;
 
-  int pixel_x = x * CELL_SIZE;
-  int pixel_y = y * CELL_SIZE;
+  int pixel_x = (x * CELL_SIZE) + BOARD_OFFSET_X;
+  int pixel_y = (y * CELL_SIZE) + BOARD_OFFSET_Y;
 
   DrawTextureEx(tex, (Vector2){pixel_x,pixel_y}, 0.0f, scale, WHITE);
 }
