@@ -1,7 +1,8 @@
 #include "ai.h"
 #include "logic.h"
+#include "raylib.h"
+
 #include <stddef.h>
-#include <stdlib.h>
 
 struct Node
 {
@@ -22,30 +23,6 @@ GameTree *CreateTree(char BoardState, char Player)
   }
 
   return NewTree;
-}
-
-bool AddNode(GameTree *root, char BoardState, int index)
-{
-  if (root == NULL)
-  {
-    return false;
-  }
-
-  char NewPlayer;
-
-  switch (root->Player)
-  {
-  case 'X':
-    NewPlayer = 'O';
-    break;
-
-  case 'O':
-    NewPlayer = 'X';
-    break;
-  }
-
-  GameTree *NewNode = CreateTree(BoardState, NewPlayer);
-  root->Sons[index] = NewNode;
 }
 
 void FreeTree(GameTree *root)
@@ -87,7 +64,7 @@ int FindRandomMove(Board b)
   if (len == 0)
     return -1;
 
-  return valid[rand() % len];
+  return valid[GetRandomValue(0, len)];
 }
 
 int GetMove(Board b, char CurrPlayer, Dificulty d)
@@ -118,7 +95,7 @@ int GetMove(Board b, char CurrPlayer, Dificulty d)
 
   FreeTree(root);
 
-  int chance = rand() % 100;
+  int chance = GetRandomValue(0, 100);
   switch (d)
   {
   case Easy:

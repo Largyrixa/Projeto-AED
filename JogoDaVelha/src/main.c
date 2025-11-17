@@ -7,9 +7,7 @@
 #include "ai.h"
 
 #include <stdbool.h>
-#include <stdlib.h>
 #include <time.h>
-#include <string.h>
 
 #ifndef ASSETS_PATH // definição do próprio CMake
 #define ASSETS_PATH "assets/"
@@ -23,11 +21,11 @@ const char soundOPath[] = ASSETS_PATH "ondascerebrais.wav";
 
 int main()
 {
-  srand(time(NULL));
   // Inicialização da janela do jogo.
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
   InitAudioDevice();
-
+  
+  SetRandomSeed(time(NULL));
   Texture2D textureX = LoadTexture(texXPath);
   Texture2D textureO = LoadTexture(texOPath);
 
@@ -39,7 +37,7 @@ int main()
   Board myBoard;
   InitBoard(&myBoard);
   char current_player = 'X';
-  Dificulty d = Easy;
+  Dificulty d = Medium;
 
   char CurrentBoardState = 'N';
   // Loop principal do jogo.
