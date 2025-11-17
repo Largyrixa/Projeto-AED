@@ -23,9 +23,13 @@ int main()
   srand(time(NULL));
   // Inicialização da janela do jogo.
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
+  InitAudioDevice();
 
   Texture2D textureX = LoadTexture(texXPath);
   Texture2D textureO = LoadTexture(texOPath);
+
+  Sound soundX = LoadSound("assets/bazinga.wav");
+  Sound soundO = LoadSound("assets/ondascerebrais.wav");
 
   SetTargetFPS(60);
 
@@ -47,17 +51,18 @@ int main()
 
         bool valid_move = MakeMove(&myBoard, (int)ClickBoardPos.x, (int)ClickBoardPos.y, current_player);
 
-        if (valid_move)
-        {
-          current_player = (current_player == 'X') ? 'O' : 'X';
-          CurrentBoardState = BoardState(myBoard);
-        }
+      if (valid_move)
+      {
+        PlaySound(soundX);
+        current_player = 'O';
+        CurrentBoardState = BoardState(myBoard);
       }
     }
     else if (current_player == 'O' && CurrentBoardState == 'N')
     {
       int move = GetMove(myBoard, 'O', d);
       MakeMove(&myBoard, move % 3, move / 3, 'O');
+      PlaySound(soundO);
       current_player = (current_player == 'X') ? 'O' : 'X';
       CurrentBoardState = BoardState(myBoard);
     }
@@ -74,6 +79,10 @@ int main()
   UnloadTexture(textureX);
   UnloadTexture(textureO);
 
+  UnloadSound(soundX);
+  UnloadSound(soundO);
+
+  CloseAudioDevice();
   CloseWindow();
 
   return 0;
