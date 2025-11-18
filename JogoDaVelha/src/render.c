@@ -2,6 +2,8 @@
 #include "logic.h"
 #include "raylib.h"
 
+#include <stdlib.h>
+
 void DrawGameGrid()
 {
   // DrawLine(startX, startY, endX, endY, color);
@@ -73,4 +75,3 @@ void DrawBoard(Board b, Texture2D tX, Texture2D tO){
     }
   }
 }
-

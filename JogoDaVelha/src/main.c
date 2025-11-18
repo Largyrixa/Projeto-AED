@@ -22,26 +22,40 @@ const char TexDrawPath[] = ASSETS_PATH "empate.png";
 const char soundXPath[] = ASSETS_PATH "bazinga.wav";
 const char soundOPath[] = ASSETS_PATH "ondascerebrais.wav";
 
+Texture2D textureX;
+Texture2D textureO;
+
+// Texturas de vitórias e empate
+Texture2D textureVictoryX;
+Texture2D textureVictoryO;
+Texture2D textureDraw;
+
+Sound soundX;
+Sound soundO;
+
+State GameState = MENU;
+
+// void Menu();
+void GameOver(Board *, char *, char *);
+
 int main()
 {
   // Inicialização da janela do jogo.
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
   InitAudioDevice();
-  
-  Texture2D textureX = LoadTexture(texXPath);
-  Texture2D textureO = LoadTexture(texOPath);
 
-  //Texturas de vitórias e empate
-  Texture2D textureVictoryX = LoadTexture(texVictoryXPath);
-  Texture2D textureVictoryO = LoadTexture(texVictoryOPath);
-  Texture2D textureDraw = LoadTexture(TexDrawPath);
+  textureX = LoadTexture(texXPath);
+  textureO = LoadTexture(texOPath);
 
-  Sound soundX = LoadSound(soundXPath);
-  Sound soundO = LoadSound(soundOPath);
+  textureVictoryX = LoadTexture(texVictoryXPath);
+  textureVictoryO = LoadTexture(texVictoryOPath);
+  textureDraw = LoadTexture(TexDrawPath);
+
+  soundX = LoadSound(soundXPath);
+  soundO = LoadSound(soundOPath);
 
   SetTargetFPS(60);
 
-  restart:
   Board myBoard;
   InitBoard(&myBoard);
   char current_player = 'X';
@@ -51,7 +65,9 @@ int main()
   // Loop principal do jogo.
   while (!WindowShouldClose())
   {
-    if (CurrentBoardState == 'N') {
+    // Bloco do jogo normal
+    if (CurrentBoardState == 'N')
+    {
       Vector2 ClickBoardPos;
       if (current_player == 'X' && CurrentBoardState == 'N')
       {
@@ -71,7 +87,7 @@ int main()
       }
       else if (current_player == 'O' && CurrentBoardState == 'N')
       {
-        WaitTime(0.5);
+        WaitTime(0.6);
         int move = GetMove(myBoard, 'O', d);
         MakeMove(&myBoard, move % 3, move / 3, 'O');
         PlaySound(soundO);
@@ -79,71 +95,18 @@ int main()
         CurrentBoardState = BoardState(myBoard);
       }
     }
-    if (CurrentBoardState != 'N')
-    {
-      if (GetKeyPressed() == KEY_ENTER)
-      {
-        goto restart;
-      }
-    }
 
+    
     BeginDrawing();
-
+    
     ClearBackground(RAYWHITE);
     DrawBoard(myBoard, textureX, textureO);
     DrawGameGrid();
 
-    //Bloco de GAME OVER
+    // Bloco de Game Over
     if (CurrentBoardState != 'N')
     {
-      // Filtro, escurece a tela
-      DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){ 0, 0, 0, 180 });
-
-      // Mensagens de vitória ou empate
-      Texture2D winnerTexture = (Texture2D){0};
-      const char *message = NULL;
-      if (CurrentBoardState == 'X')
-      {
-        winnerTexture = textureVictoryX;
-        message = "Shewdow Ganhou!";
-      }
-      else if (CurrentBoardState == 'O')
-      {
-        winnerTexture = textureVictoryO;
-        message = "DAVi.a Ganhou!";
-      }
-      else if (CurrentBoardState == 'E')
-      {
-        winnerTexture = textureDraw;
-        message = "Empate!";
-      }
-
-      if (winnerTexture.id > 0) // Só desenha se não for empate
-      {
-        // Lógica para centralizar e escalar a imagem
-        float scale = ((double)CELL_SIZE * 1.5f) / (double)winnerTexture.width;
-        float imageWidth = winnerTexture.width * scale;
-        float imageHeight = winnerTexture.height * scale;
-
-        // Posição central na tela
-        Vector2 position;
-        position.x = (SCREEN_WIDTH - imageWidth) / 2.0f;
-        // Posiciona a imagem para que sua base fique um pouco acima do centro
-        position.y = (SCREEN_HEIGHT / 2.0f) - imageHeight;
-
-        DrawTextureEx(winnerTexture, position, 0.0f, scale, WHITE);
-      }
-
-      // Desenha o texto de vitória/empate
-      int fontSize = 60;
-      int textWidth = MeasureText(message, fontSize);
-      DrawText(message, (SCREEN_WIDTH - textWidth) / 2, SCREEN_HEIGHT / 2 + 20, fontSize, GOLD);
-
-      // Desenha a instrução de reinício
-      const char *restartMessage = "Pressione ENTER para reiniciar";
-      int restartFontSize = 30;
-      int restartTextWidth = MeasureText(restartMessage, restartFontSize);
-      DrawText(restartMessage, (SCREEN_WIDTH - restartTextWidth) / 2, SCREEN_HEIGHT / 2 + 90, restartFontSize, WHITE);
+      GameOver(&myBoard, &current_player, &CurrentBoardState);
     }
 
     EndDrawing();
@@ -163,4 +126,65 @@ int main()
   CloseWindow();
 
   return 0;
+}
+
+void GameOver(Board *b, char *current_player, char *CurrentBoardStatePtr)
+{
+  char CurrentBoardState = *CurrentBoardStatePtr;
+  // Filtro, escurece a tela
+  DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){0, 0, 0, 180});
+
+  // Mensagens de vitória ou empate
+  Texture2D winnerTexture = (Texture2D){0};
+  const char *message = NULL;
+  if (CurrentBoardState == 'X')
+  {
+    winnerTexture = textureVictoryX;
+    message = "Shewdow Ganhou!";
+  }
+  else if (CurrentBoardState == 'O')
+  {
+    winnerTexture = textureVictoryO;
+    message = "DAVi.a Ganhou!";
+  }
+  else if (CurrentBoardState == 'E')
+  {
+    winnerTexture = textureDraw;
+    message = "Empate!";
+  }
+
+  if (winnerTexture.id > 0) // Só desenha se não for empate
+  {
+    // Lógica para centralizar e escalar a imagem
+    float scale = ((double)CELL_SIZE * 1.5f) / (double)winnerTexture.width;
+    float imageWidth = winnerTexture.width * scale;
+    float imageHeight = winnerTexture.height * scale;
+
+    // Posição central na tela
+    Vector2 position;
+    position.x = (SCREEN_WIDTH - imageWidth) / 2.0f;
+    // Posiciona a imagem para que sua base fique um pouco acima do centro
+    position.y = (SCREEN_HEIGHT / 2.0f) - imageHeight;
+
+    DrawTextureEx(winnerTexture, position, 0.0f, scale, WHITE);
+  }
+
+  // Desenha o texto de vitória/empate
+  int fontSize = 60;
+  int textWidth = MeasureText(message, fontSize);
+  DrawText(message, (SCREEN_WIDTH - textWidth) / 2, SCREEN_HEIGHT / 2 + 20, fontSize, GOLD);
+
+  // Desenha a instrução de reinício
+  const char *restartMessage = "Pressione ENTER para reiniciar";
+  int restartFontSize = 30;
+  int restartTextWidth = MeasureText(restartMessage, restartFontSize);
+  DrawText(restartMessage, (SCREEN_WIDTH - restartTextWidth) / 2, SCREEN_HEIGHT / 2 + 90, restartFontSize, WHITE);
+
+  if (GetKeyPressed() == KEY_ENTER)
+  {
+    InitBoard(b);
+    *current_player = 'X';
+    *CurrentBoardStatePtr = 'N';
+    GameState = MENU;
+  }
 }
