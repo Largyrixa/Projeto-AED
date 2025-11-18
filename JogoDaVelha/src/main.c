@@ -20,7 +20,12 @@ const char texVictoryOPath[] = ASSETS_PATH "vit_dava.png";
 const char TexDrawPath[] = ASSETS_PATH "empate.png";
 
 const char soundXPath[] = ASSETS_PATH "bazinga.wav";
+const char soundWinXPath[] = ASSETS_PATH "Shadow_4EVER.wav";
+
 const char soundOPath[] = ASSETS_PATH "ondascerebrais.wav";
+const char soundWinOPath[] = ASSETS_PATH "contemplemomago.wav";
+
+const char soundDrawPath[] = ASSETS_PATH "empatebrutal.wav";
 
 int main()
 {
@@ -37,7 +42,12 @@ int main()
   Texture2D textureDraw = LoadTexture(TexDrawPath);
 
   Sound soundX = LoadSound(soundXPath);
+  Sound soundWinX = LoadSound(soundWinXPath);
+
   Sound soundO = LoadSound(soundOPath);
+  Sound soundWinO = LoadSound(soundWinOPath);
+
+  Sound soundDraw = LoadSound(soundDrawPath);
 
   SetTargetFPS(60);
 
@@ -83,6 +93,9 @@ int main()
     {
       if (GetKeyPressed() == KEY_ENTER)
       {
+        StopSound(soundWinX);
+        StopSound(soundWinO);
+        StopSound(soundDraw);
         goto restart;
       }
     }
@@ -106,16 +119,33 @@ int main()
       {
         winnerTexture = textureVictoryX;
         message = "Shewdow Ganhou!";
+
+        // Toca o som de vitória do jogador X
+        // !! SEPARADO PARA NÃO CONFLITAR COM A IMAGEM !!
+        if (!IsSoundPlaying(soundWinX))
+        {
+          PlaySound(soundWinX);
+        }
       }
       else if (CurrentBoardState == 'O')
       {
         winnerTexture = textureVictoryO;
         message = "DAVi.a Ganhou!";
+
+        if (!IsSoundPlaying(soundWinO))
+        {
+          PlaySound(soundWinO);
+        }
       }
       else if (CurrentBoardState == 'E')
       {
         winnerTexture = textureDraw;
         message = "Empate!";
+
+        if (!IsSoundPlaying(soundDraw))
+        {
+          PlaySound(soundDraw);
+        }
       }
 
       if (winnerTexture.id > 0) // Só desenha se não for empate
@@ -157,7 +187,10 @@ int main()
   UnloadTexture(textureDraw);
 
   UnloadSound(soundX);
+  UnloadSound(soundWinX);
   UnloadSound(soundO);
+  UnloadSound(soundWinO);
+  UnloadSound(soundDraw);
 
   CloseAudioDevice();
   CloseWindow();
