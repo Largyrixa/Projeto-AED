@@ -2,7 +2,7 @@
 #include "render.h"
 #include "raylib.h"
 
-bool GetClickBoardPos(Vector2 *BoardPos)
+bool GetClickBoardPos(int *x, int *y)
 {
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
   {
@@ -18,8 +18,8 @@ bool GetClickBoardPos(Vector2 *BoardPos)
     double relative_x = MPos.x - BOARD_OFFSET_X;
     double relative_y = MPos.y - BOARD_OFFSET_Y;
 
-    BoardPos->x = (int)(relative_x / CELL_SIZE);
-    BoardPos->y = (int)(relative_y / CELL_SIZE);
+    *x = (relative_x / CELL_SIZE);
+    *y = (relative_y / CELL_SIZE);
     return true;
   }
   else
