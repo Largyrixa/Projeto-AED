@@ -68,7 +68,7 @@ int FindRandomMove(Board b, int BestMove)
   return valid[GetRandomValue(0, len-1)];
 }
 
-int GetMove(Board b, char CurrPlayer, Dificulty d)
+int GetMove(Board b, char CurrPlayer, Difficulty d)
 {
   GameTree *root = FindGameTree(b, CurrPlayer);
 
@@ -77,7 +77,6 @@ int GetMove(Board b, char CurrPlayer, Dificulty d)
     return -1;
   }
 
-  int move;
   int BestScore = -2;
   int BestMove = -1;
 
@@ -133,7 +132,7 @@ int MinMax(GameTree *root, char Player)
   }
 
   int BestScore;
-  if (root->Player == Player)
+  if (root->Player == Player) // Agente maximizante
   {
     BestScore = -2;
 
@@ -146,7 +145,7 @@ int MinMax(GameTree *root, char Player)
       }
     }
   }
-  else
+  else // Agente minimizante
   {
     BestScore = 2;
 

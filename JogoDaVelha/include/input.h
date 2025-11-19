@@ -11,6 +11,6 @@ typedef enum {
   GAME_OVER,
 } State;
 
-bool GetClickBoardPos(Vector2 *ClickBoardPos);
+bool GetClickBoardPos(int *x, int *y);
 
 #endif

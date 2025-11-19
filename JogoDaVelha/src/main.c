@@ -1,199 +1,332 @@
 #include <stdio.h>
+#include <stdbool.h>
 
+#include "raylib.h"
 #include "input.h"
 #include "logic.h"
 #include "render.h"
-#include "raylib.h"
 #include "ai.h"
 
-#include <stdbool.h>
-
-#ifndef ASSETS_PATH // definição do próprio CMake
-#define ASSETS_PATH "assets/"
+// --- Definições de Caminhos (Assets) ---
+#ifndef ASSETS_PATH
+  #define ASSETS_PATH "assets/"
 #endif
 
-const char texXPath[] = ASSETS_PATH "x.png";
-const char texOPath[] = ASSETS_PATH "o.png";
+// --- Estruturas Auxiliares ---
 
-const char texVictoryXPath[] = ASSETS_PATH "vit_shewdow.png";
-const char texVictoryOPath[] = ASSETS_PATH "vit_dava.png";
-const char TexDrawPath[] = ASSETS_PATH "empate.png";
+// Agrupa todos os recursos carregados para evitar variáveis soltas na main
+typedef struct
+{
+  Texture2D texX;
+  Texture2D texO;
+  Texture2D texVictoryX;
+  Texture2D texVictoryO;
+  Texture2D texDraw;
+  Sound soundX;
+  Sound soundO;
+  Sound soundWinX;
+  Sound soundWinO;
+  Sound soundDraw;
+} GameResources;
 
-const char soundXPath[] = ASSETS_PATH "bazinga.wav";
-const char soundWinXPath[] = ASSETS_PATH "Shadow_4EVER.wav";
+// Agrupa o estado mutável do jogo
+typedef struct
+{
+  Board board;
+  char currentPlayer; // 'X' ou 'O'
+  char boardState;    // 'N' (Normal), 'X', 'O', 'E' (Empate)
+  Difficulty aiDifficulty;
+  State currentState;
+  float timeSinceLastMove; // Para controlar o delay da IA
+} GameSession;
 
-const char soundOPath[] = ASSETS_PATH "ondascerebrais.wav";
-const char soundWinOPath[] = ASSETS_PATH "contemplemomago.wav";
+// --- Protótipos das Funções Locais ---
+GameResources LoadGameResources();
+void UnloadGameResources(GameResources *res);
+void ResetGame(GameSession *session);
+void UpdateGame(GameSession *session, GameResources *res);
+void DrawGame(GameSession *session, GameResources *res);
+void DrawMenu(GameSession *session);
 
-const char soundDrawPath[] = ASSETS_PATH "empatebrutal.wav";
-
+// --- Função Principal ---
 int main()
 {
-  // Inicialização da janela do jogo.
+  // 1. Inicialização do Sistema
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
   InitAudioDevice();
-  
-  Texture2D textureX = LoadTexture(texXPath);
-  Texture2D textureO = LoadTexture(texOPath);
-
-  //Texturas de vitórias e empate
-  Texture2D textureVictoryX = LoadTexture(texVictoryXPath);
-  Texture2D textureVictoryO = LoadTexture(texVictoryOPath);
-  Texture2D textureDraw = LoadTexture(TexDrawPath);
-
-  Sound soundX = LoadSound(soundXPath);
-  Sound soundWinX = LoadSound(soundWinXPath);
-
-  Sound soundO = LoadSound(soundOPath);
-  Sound soundWinO = LoadSound(soundWinOPath);
-
-  Sound soundDraw = LoadSound(soundDrawPath);
-
   SetTargetFPS(60);
 
-  restart:
-  Board myBoard;
-  InitBoard(&myBoard);
-  char current_player = 'X';
-  Dificulty d = Easy;
+  // 2. Carregamento de Recursos
+  GameResources res = LoadGameResources();
 
-  char CurrentBoardState = 'N';
-  // Loop principal do jogo.
+  // 3. Inicialização da Sessão de Jogo
+  GameSession session;
+  session.currentState = MENU; // Começa no Menu
+  session.aiDifficulty = Easy; // Dificuldade padrão
+  ResetGame(&session);
+
+  // 4. Game Loop Principal
   while (!WindowShouldClose())
   {
-    if (CurrentBoardState == 'N') {
-      Vector2 ClickBoardPos;
-      if (current_player == 'X' && CurrentBoardState == 'N')
-      {
-        if (GetClickBoardPos(&ClickBoardPos))
-        {
-          printf("Clique: (%d, %d)\n", (int)ClickBoardPos.x, (int)ClickBoardPos.y);
-
-          bool valid_move = MakeMove(&myBoard, (int)ClickBoardPos.x, (int)ClickBoardPos.y, current_player);
-
-          if (valid_move)
-          {
-            PlaySound(soundX);
-            current_player = 'O';
-            CurrentBoardState = BoardState(myBoard);
-          }
-        }
-      }
-      else if (current_player == 'O' && CurrentBoardState == 'N')
-      {
-        WaitTime(0.5);
-        int move = GetMove(myBoard, 'O', d);
-        MakeMove(&myBoard, move % 3, move / 3, 'O');
-        PlaySound(soundO);
-        current_player = (current_player == 'X') ? 'O' : 'X';
-        CurrentBoardState = BoardState(myBoard);
-      }
-    }
-    if (CurrentBoardState != 'N')
-    {
-      if (GetKeyPressed() == KEY_ENTER)
-      {
-        StopSound(soundWinX);
-        StopSound(soundWinO);
-        StopSound(soundDraw);
-        goto restart;
-      }
-    }
-
-    BeginDrawing();
-
-    ClearBackground(RAYWHITE);
-    DrawBoard(myBoard, textureX, textureO);
-    DrawGameGrid();
-
-    //Bloco de GAME OVER
-    if (CurrentBoardState != 'N')
-    {
-      // Filtro, escurece a tela
-      DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){ 0, 0, 0, 180 });
-
-      // Mensagens de vitória ou empate
-      Texture2D winnerTexture = (Texture2D){0};
-      const char *message = NULL;
-      if (CurrentBoardState == 'X')
-      {
-        winnerTexture = textureVictoryX;
-        message = "Shewdow Ganhou!";
-
-        // Toca o som de vitória do jogador X
-        // !! SEPARADO PARA NÃO CONFLITAR COM A IMAGEM !!
-        if (!IsSoundPlaying(soundWinX))
-        {
-          PlaySound(soundWinX);
-        }
-      }
-      else if (CurrentBoardState == 'O')
-      {
-        winnerTexture = textureVictoryO;
-        message = "DAVi.a Ganhou!";
-
-        if (!IsSoundPlaying(soundWinO))
-        {
-          PlaySound(soundWinO);
-        }
-      }
-      else if (CurrentBoardState == 'E')
-      {
-        winnerTexture = textureDraw;
-        message = "Empate!";
-
-        if (!IsSoundPlaying(soundDraw))
-        {
-          PlaySound(soundDraw);
-        }
-      }
-
-      if (winnerTexture.id > 0) // Só desenha se não for empate
-      {
-        // Lógica para centralizar e escalar a imagem
-        float scale = ((double)CELL_SIZE * 1.5f) / (double)winnerTexture.width;
-        float imageWidth = winnerTexture.width * scale;
-        float imageHeight = winnerTexture.height * scale;
-
-        // Posição central na tela
-        Vector2 position;
-        position.x = (SCREEN_WIDTH - imageWidth) / 2.0f;
-        // Posiciona a imagem para que sua base fique um pouco acima do centro
-        position.y = (SCREEN_HEIGHT / 2.0f) - imageHeight;
-
-        DrawTextureEx(winnerTexture, position, 0.0f, scale, WHITE);
-      }
-
-      // Desenha o texto de vitória/empate
-      int fontSize = 60;
-      int textWidth = MeasureText(message, fontSize);
-      DrawText(message, (SCREEN_WIDTH - textWidth) / 2, SCREEN_HEIGHT / 2 + 20, fontSize, GOLD);
-
-      // Desenha a instrução de reinício
-      const char *restartMessage = "Pressione ENTER para reiniciar";
-      int restartFontSize = 30;
-      int restartTextWidth = MeasureText(restartMessage, restartFontSize);
-      DrawText(restartMessage, (SCREEN_WIDTH - restartTextWidth) / 2, SCREEN_HEIGHT / 2 + 90, restartFontSize, WHITE);
-    }
-
-    EndDrawing();
+    UpdateGame(&session, &res);
+    DrawGame(&session, &res);
   }
 
-  UnloadTexture(textureX);
-  UnloadTexture(textureO);
-
-  UnloadTexture(textureVictoryX);
-  UnloadTexture(textureVictoryO);
-  UnloadTexture(textureDraw);
-
-  UnloadSound(soundX);
-  UnloadSound(soundWinX);
-  UnloadSound(soundO);
-  UnloadSound(soundWinO);
-  UnloadSound(soundDraw);
-
+  // 5. Limpeza
+  UnloadGameResources(&res);
   CloseAudioDevice();
   CloseWindow();
 
   return 0;
+}
+
+// --- Implementação das Funções ---
+
+void UpdateGame(GameSession *s, GameResources *res)
+{
+  switch (s->currentState)
+  {
+  case MENU:
+  {
+    // Seleção de Dificuldade
+    if (IsKeyPressed(KEY_RIGHT))
+    {
+      s->aiDifficulty = (s->aiDifficulty + 1) % 3;
+    }
+    if (IsKeyPressed(KEY_LEFT))
+    {
+      s->aiDifficulty = (s->aiDifficulty == 0) ? (Hard) : (s->aiDifficulty - 1);
+      if (s->aiDifficulty < 0)
+        s->aiDifficulty = Hard;
+    }
+
+    // Iniciar Jogo
+    if (IsKeyPressed(KEY_ENTER))
+    {
+      ResetGame(s); // Garante tabuleiro limpo
+      s->currentState = PLAYING;
+    }
+  }
+  break;
+
+  case PLAYING:
+  {
+    // Se o jogo acabou, espera input para ir para Game Over ou Menu
+    if (s->boardState != 'N')
+    {
+      s->currentState = GAME_OVER;
+      return;
+    }
+
+    // Turno do Jogador (X)
+    if (s->currentPlayer == 'X')
+    {
+      int clickPos[2];
+      if (GetClickBoardPos(&clickPos[0], &clickPos[1])) // Função do input.c
+      {
+        if (MakeMove(&s->board, clickPos[0], clickPos[1], 'X'))
+        {
+          PlaySound(res->soundX);
+          s->currentPlayer = 'O';
+          s->boardState = BoardState(s->board);
+          s->timeSinceLastMove = 0; // Reseta timer para delay da IA
+        }
+      }
+    }
+    // Turno da IA (O)
+    else if (s->currentPlayer == 'O')
+    {
+      s->timeSinceLastMove += GetFrameTime();
+
+      // Pequeno delay para parecer que a IA está "pensando" (0.5s)
+      if (s->timeSinceLastMove >= 0.5f)
+      {
+        int move = GetMove(s->board, 'O', s->aiDifficulty);
+
+        // Verifica se GetMove retornou erro (-1) ou movimento válido
+        if (move != -1)
+        {
+          MakeMove(&s->board, move % 3, move / 3, 'O');
+          PlaySound(res->soundO);
+          s->currentPlayer = 'X';
+          s->boardState = BoardState(s->board);
+        }
+      }
+    }
+  }
+  break;
+
+  case GAME_OVER:
+  {
+    // Toca os sons de vitória apenas uma vez (verificação feita no Draw ou aqui)
+    // Aqui estamos apenas gerenciando a transição de volta ao menu ou reinício
+
+    if (IsKeyPressed(KEY_ENTER))
+    {
+      // Para sons antes de reiniciar
+      StopSound(res->soundWinX);
+      StopSound(res->soundWinO);
+      StopSound(res->soundDraw);
+
+      // Volta para o Menu (ou poderia ser ResetGame para jogar direto)
+      s->currentState = MENU;
+    }
+  }
+  break;
+  }
+}
+
+void DrawGame(GameSession *s, GameResources *res)
+{
+  BeginDrawing();
+  ClearBackground(RAYWHITE);
+
+  switch (s->currentState)
+  {
+  case MENU:
+    DrawMenu(s);
+    break;
+
+  case PLAYING:
+  case GAME_OVER:
+  {
+    // Desenha o jogo base
+    DrawBoard(s->board, res->texX, res->texO);
+    DrawGameGrid();
+
+    // Se estiver em GAME OVER, desenha o overlay
+    if (s->currentState == GAME_OVER)
+    {
+      DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){0, 0, 0, 180});
+
+      Texture2D winnerTex = {0};
+      const char *msg = "";
+      Color msgColor = WHITE;
+
+      if (s->boardState == 'X')
+      {
+        winnerTex = res->texVictoryX;
+        msg = "Shewdow Venceu!";
+        msgColor = RED;
+        if (!IsSoundPlaying(res->soundWinX))
+          PlaySound(res->soundWinX);
+      }
+      else if (s->boardState == 'O')
+      {
+        winnerTex = res->texVictoryO;
+        msg = "DAVi.a Venceu!";
+        msgColor = BLUE;
+        if (!IsSoundPlaying(res->soundWinO))
+          PlaySound(res->soundWinO);
+      }
+      else
+      {
+        winnerTex = res->texDraw;
+        msg = "EMPATE BRUTAL!";
+        msgColor = GOLD;
+        if (!IsSoundPlaying(res->soundDraw))
+          PlaySound(res->soundDraw);
+      }
+
+      // Desenha Imagem da Vitória/Empate
+      if (winnerTex.id > 0)
+      {
+        float scale = ((double)CELL_SIZE * 1.5f) / (double)winnerTex.width;
+        Vector2 pos = {
+            (SCREEN_WIDTH - winnerTex.width * scale) / 2.0f,
+            (SCREEN_HEIGHT / 2.0f) - (winnerTex.height * scale)};
+        DrawTextureEx(winnerTex, pos, 0.0f, scale, WHITE);
+      }
+
+      // Textos
+      DrawText(msg, (SCREEN_WIDTH - MeasureText(msg, 60)) / 2, SCREEN_HEIGHT / 2 + 20, 60, msgColor);
+
+      const char *sub = "Pressione ENTER para o Menu";
+      DrawText(sub, (SCREEN_WIDTH - MeasureText(sub, 30)) / 2, SCREEN_HEIGHT / 2 + 90, 30, LIGHTGRAY);
+    }
+  }
+  break;
+  }
+
+  EndDrawing();
+}
+
+void DrawMenu(GameSession *s)
+{
+  // Fundo simples ou estilizado
+  ClearBackground(RAYWHITE);
+
+  const char *title = "JOGO DA VELHA";
+  DrawText(title, (SCREEN_WIDTH - MeasureText(title, 80)) / 2, 150, 80, DARKGRAY);
+
+  const char *subtitle = "Escolha a Dificuldade:";
+  DrawText(subtitle, (SCREEN_WIDTH - MeasureText(subtitle, 40)) / 2, 350, 40, GRAY);
+
+  // Mostra a dificuldade atual
+  const char *diffText;
+  Color diffColor;
+  switch (s->aiDifficulty)
+  {
+  case Easy:
+    diffText = "< FACIL >";
+    diffColor = GREEN;
+    break;
+  case Medium:
+    diffText = "< MEDIO >";
+    diffColor = ORANGE;
+    break;
+  case Hard:
+    diffText = "< DIFICIL >";
+    diffColor = RED;
+    break;
+  }
+
+  DrawText(diffText, (SCREEN_WIDTH - MeasureText(diffText, 50)) / 2, 420, 50, diffColor);
+
+  const char *instr = "Use as Setas ESQUERDA/DIREITA para mudar";
+  DrawText(instr, (SCREEN_WIDTH - MeasureText(instr, 20)) / 2, 500, 20, LIGHTGRAY);
+
+  const char *start = "Pressione ENTER para Iniciar";
+  DrawText(start, (SCREEN_WIDTH - MeasureText(start, 30)) / 2, 700, 30, BLACK);
+}
+
+void ResetGame(GameSession *s)
+{
+  InitBoard(&s->board);
+  s->currentPlayer = 'X';
+  s->boardState = 'N';
+  s->timeSinceLastMove = 0;
+}
+
+GameResources LoadGameResources()
+{
+  GameResources res;
+  res.texX = LoadTexture(ASSETS_PATH "x.png");
+  res.texO = LoadTexture(ASSETS_PATH "o.png");
+  res.texVictoryX = LoadTexture(ASSETS_PATH "vit_shewdow.png");
+  res.texVictoryO = LoadTexture(ASSETS_PATH "vit_dava.png");
+  res.texDraw = LoadTexture(ASSETS_PATH "empate.png");
+
+  res.soundX = LoadSound(ASSETS_PATH "bazinga.wav");
+  res.soundO = LoadSound(ASSETS_PATH "ondascerebrais.wav");
+  res.soundWinX = LoadSound(ASSETS_PATH "Shadow_4EVER.wav");
+  res.soundWinO = LoadSound(ASSETS_PATH "contemplemomago.wav");
+  res.soundDraw = LoadSound(ASSETS_PATH "empatebrutal.wav");
+
+  return res;
+}
+
+void UnloadGameResources(GameResources *res)
+{
+  UnloadTexture(res->texX);
+  UnloadTexture(res->texO);
+  UnloadTexture(res->texVictoryX);
+  UnloadTexture(res->texVictoryO);
+  UnloadTexture(res->texDraw);
+
+  UnloadSound(res->soundX);
+  UnloadSound(res->soundO);
+  UnloadSound(res->soundWinX);
+  UnloadSound(res->soundWinO);
+  UnloadSound(res->soundDraw);
 }
