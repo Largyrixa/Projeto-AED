@@ -27,21 +27,21 @@
 
 - [x] Criar funções `DrawX(int x, int y)` e `DrawO(int x, int y)` com cores e estilos diferentes (ou ainda com imagens aleatórias pra ficar engraçado sei lakkkk)
 
-- [ ] Criar a tela de "Game Over" (Mostrar quem ganhou e instrução para reiniciar).
+- [x] Criar a tela de "Game Over" (Mostrar quem ganhou e instrução para reiniciar).
 
-- [ ] `Extra`: Adicionar efeitos sonoros para o clique e ao ganhar (e talvez uma música).
+- [x] `Extra`: Adicionar efeitos sonoros para o clique e ao ganhar (e talvez uma música).
 
 # Interação e UI
 
 **Dificuldade:** Média (lógica de estado e interação)
 
-- [ ] Implementar o **Game Loop** principal (While (!WindowShouldClose))
+- [x] Implementar o **Game Loop** principal (While (!WindowShouldClose))
 
 - [x] Criar o sistema de conversão: Transformar o o clique do mouse em coordenadas da matriz.
 
-- [ ] Criar o **Menu Inicial**: Botões para selecionar a dificuldade e botão "Jogar"
+- [x] Criar o **Menu Inicial**: Botões para selecionar a dificuldade e botão "Jogar"
 
-- [ ] Gerenciar os estado do jogo: `MENU`, `PLAYING`, `GAME_OVER`. É ele quem decide quando chamar as funções de desenho ou a IA.
+- [x] Gerenciar os estado do jogo: `MENU`, `PLAYING`, `GAME_OVER`. É ele quem decide quando chamar as funções de desenho ou a IA.
 
 # Gerenciamento de Memória & Limpeza
 
