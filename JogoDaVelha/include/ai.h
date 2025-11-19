@@ -26,7 +26,7 @@ GameTree *CreateTree(char BoardState, char Player);
   Calcula o movimento do bot conforme a dificuldade por meio de uma árvore de possibilidades 'GameTree'
   Basicamente uma versão com diferentes dificuldades do minmax
 */
-int GetMove(Board b, char Bot, Dificulty d);
+int GetMove(Board b, char Bot, Difficulty d);
 void FreeTree(GameTree *root);
 
 #endif

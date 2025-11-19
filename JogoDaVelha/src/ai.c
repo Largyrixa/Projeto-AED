@@ -68,7 +68,7 @@ int FindRandomMove(Board b, int BestMove)
   return valid[GetRandomValue(0, len-1)];
 }
 
-int GetMove(Board b, char CurrPlayer, Dificulty d)
+int GetMove(Board b, char CurrPlayer, Difficulty d)
 {
   GameTree *root = FindGameTree(b, CurrPlayer);
 
