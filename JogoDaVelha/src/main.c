@@ -9,12 +9,19 @@
 
 // --- Definições de Caminhos (Assets) ---
 #ifndef ASSETS_PATH
-  #define ASSETS_PATH "assets/"
+#define ASSETS_PATH "assets/"
 #endif
+
+// --- Constantes de Layout do Menu ---
+#define BTN_PLAY_W 200
+#define BTN_PLAY_H 50
+#define BTN_DIFF_W 100
+#define BTN_DIFF_H 50
+#define BTN_SPACING 20
 
 // --- Estruturas Auxiliares ---
 
-// Agrupa todos os recursos carregados para evitar variáveis soltas na main
+// Agrupa todos os recursos carregados
 typedef struct
 {
   Texture2D texX;
@@ -22,6 +29,7 @@ typedef struct
   Texture2D texVictoryX;
   Texture2D texVictoryO;
   Texture2D texDraw;
+  Texture2D texBackground; // Adicionado background aqui
   Sound soundX;
   Sound soundO;
   Sound soundWinX;
@@ -33,39 +41,41 @@ typedef struct
 typedef struct
 {
   Board board;
-  char currentPlayer; // 'X' ou 'O'
-  char boardState;    // 'N' (Normal), 'X', 'O', 'E' (Empate)
-  Difficulty aiDifficulty;
+  char currentPlayer;
+  char boardState;
+  Difficulty aiDifficulty; // Atenção: verifique se no seu enum é Difficulty ou Difficulty
   State currentState;
-  float timeSinceLastMove; // Para controlar o delay da IA
+  float timeSinceLastMove;
 } GameSession;
 
-// --- Protótipos das Funções Locais ---
+// --- Protótipos ---
 GameResources LoadGameResources();
 void UnloadGameResources(GameResources *res);
 void ResetGame(GameSession *session);
 void UpdateGame(GameSession *session, GameResources *res);
 void DrawGame(GameSession *session, GameResources *res);
-void DrawMenu(GameSession *session);
+void DrawMenu(GameSession *session, GameResources *res); // Menu agora recebe resources
+Rectangle GetPlayBtnRect();
+Rectangle GetDiffBtnRect(int index); // index 0, 1 ou 2
 
 // --- Função Principal ---
 int main()
 {
-  // 1. Inicialização do Sistema
+  // 1. Inicialização
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
   InitAudioDevice();
   SetTargetFPS(60);
 
-  // 2. Carregamento de Recursos
+  // 2. Carregamento
   GameResources res = LoadGameResources();
 
-  // 3. Inicialização da Sessão de Jogo
+  // 3. Sessão
   GameSession session;
-  session.currentState = MENU; // Começa no Menu
-  session.aiDifficulty = Easy; // Dificuldade padrão
+  session.currentState = MENU;
+  session.aiDifficulty = Easy;
   ResetGame(&session);
 
-  // 4. Game Loop Principal
+  // 4. Loop
   while (!WindowShouldClose())
   {
     UpdateGame(&session, &res);
@@ -82,68 +92,91 @@ int main()
 
 // --- Implementação das Funções ---
 
+// Funções auxiliares para calcular posição dos botões (usadas no Update e no Draw)
+Rectangle GetPlayBtnRect()
+{
+  return (Rectangle){
+      (SCREEN_WIDTH - BTN_PLAY_W) / 2.0f,
+      (SCREEN_HEIGHT - BTN_PLAY_H) / 2.0f,
+      BTN_PLAY_W, BTN_PLAY_H};
+}
+
+Rectangle GetDiffBtnRect(int index)
+{
+  float totalWidth = (BTN_DIFF_W * 3) + (BTN_SPACING * 2);
+  float startX = (SCREEN_WIDTH - totalWidth) / 2.0f;
+  float y = (SCREEN_HEIGHT / 2.0f) + (BTN_PLAY_H / 2.0f) + BTN_SPACING;
+
+  return (Rectangle){
+      startX + index * (BTN_DIFF_W + BTN_SPACING),
+      y,
+      BTN_DIFF_W, BTN_DIFF_H};
+}
+
 void UpdateGame(GameSession *s, GameResources *res)
 {
   switch (s->currentState)
   {
   case MENU:
   {
-    // Seleção de Dificuldade
-    if (IsKeyPressed(KEY_RIGHT))
+    Vector2 mousePoint = GetMousePosition();
+    Rectangle btnPlay = GetPlayBtnRect();
+    Rectangle btnEasy = GetDiffBtnRect(0);
+    Rectangle btnMed = GetDiffBtnRect(1);
+    Rectangle btnHard = GetDiffBtnRect(2);
+
+    // Lógica do Botão JOGAR
+    if (CheckCollisionPointRec(mousePoint, btnPlay))
     {
-      s->aiDifficulty = (s->aiDifficulty + 1) % 3;
-    }
-    if (IsKeyPressed(KEY_LEFT))
-    {
-      s->aiDifficulty = (s->aiDifficulty == 0) ? (Hard) : (s->aiDifficulty - 1);
-      if (s->aiDifficulty < 0)
-        s->aiDifficulty = Hard;
+      if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+      {
+        ResetGame(s);
+        s->currentState = PLAYING;
+      }
     }
 
-    // Iniciar Jogo
-    if (IsKeyPressed(KEY_ENTER))
+    // Lógica dos Botões de Dificuldade
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-      ResetGame(s); // Garante tabuleiro limpo
-      s->currentState = PLAYING;
+      if (CheckCollisionPointRec(mousePoint, btnEasy))
+        s->aiDifficulty = Easy;
+      if (CheckCollisionPointRec(mousePoint, btnMed))
+        s->aiDifficulty = Medium;
+      if (CheckCollisionPointRec(mousePoint, btnHard))
+        s->aiDifficulty = Hard;
     }
   }
   break;
 
   case PLAYING:
   {
-    // Se o jogo acabou, espera input para ir para Game Over ou Menu
     if (s->boardState != 'N')
     {
       s->currentState = GAME_OVER;
       return;
     }
 
-    // Turno do Jogador (X)
     if (s->currentPlayer == 'X')
     {
       int clickPos[2];
-      if (GetClickBoardPos(&clickPos[0], &clickPos[1])) // Função do input.c
+      // Ajustei para usar Vector2 conforme seu input.h original
+      if (GetClickBoardPos(&clickPos[0], &clickPos[1]))
       {
         if (MakeMove(&s->board, clickPos[0], clickPos[1], 'X'))
         {
           PlaySound(res->soundX);
           s->currentPlayer = 'O';
           s->boardState = BoardState(s->board);
-          s->timeSinceLastMove = 0; // Reseta timer para delay da IA
+          s->timeSinceLastMove = 0;
         }
       }
     }
-    // Turno da IA (O)
     else if (s->currentPlayer == 'O')
     {
       s->timeSinceLastMove += GetFrameTime();
-
-      // Pequeno delay para parecer que a IA está "pensando" (0.5s)
       if (s->timeSinceLastMove >= 0.5f)
       {
         int move = GetMove(s->board, 'O', s->aiDifficulty);
-
-        // Verifica se GetMove retornou erro (-1) ou movimento válido
         if (move != -1)
         {
           MakeMove(&s->board, move % 3, move / 3, 'O');
@@ -158,17 +191,11 @@ void UpdateGame(GameSession *s, GameResources *res)
 
   case GAME_OVER:
   {
-    // Toca os sons de vitória apenas uma vez (verificação feita no Draw ou aqui)
-    // Aqui estamos apenas gerenciando a transição de volta ao menu ou reinício
-
     if (IsKeyPressed(KEY_ENTER))
     {
-      // Para sons antes de reiniciar
       StopSound(res->soundWinX);
       StopSound(res->soundWinO);
       StopSound(res->soundDraw);
-
-      // Volta para o Menu (ou poderia ser ResetGame para jogar direto)
       s->currentState = MENU;
     }
   }
@@ -184,17 +211,15 @@ void DrawGame(GameSession *s, GameResources *res)
   switch (s->currentState)
   {
   case MENU:
-    DrawMenu(s);
+    DrawMenu(s, res);
     break;
 
   case PLAYING:
   case GAME_OVER:
   {
-    // Desenha o jogo base
     DrawBoard(s->board, res->texX, res->texO);
     DrawGameGrid();
 
-    // Se estiver em GAME OVER, desenha o overlay
     if (s->currentState == GAME_OVER)
     {
       DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){0, 0, 0, 180});
@@ -228,7 +253,6 @@ void DrawGame(GameSession *s, GameResources *res)
           PlaySound(res->soundDraw);
       }
 
-      // Desenha Imagem da Vitória/Empate
       if (winnerTex.id > 0)
       {
         float scale = ((double)CELL_SIZE * 1.5f) / (double)winnerTex.width;
@@ -238,9 +262,7 @@ void DrawGame(GameSession *s, GameResources *res)
         DrawTextureEx(winnerTex, pos, 0.0f, scale, WHITE);
       }
 
-      // Textos
       DrawText(msg, (SCREEN_WIDTH - MeasureText(msg, 60)) / 2, SCREEN_HEIGHT / 2 + 20, 60, msgColor);
-
       const char *sub = "Pressione ENTER para o Menu";
       DrawText(sub, (SCREEN_WIDTH - MeasureText(sub, 30)) / 2, SCREEN_HEIGHT / 2 + 90, 30, LIGHTGRAY);
     }
@@ -251,43 +273,48 @@ void DrawGame(GameSession *s, GameResources *res)
   EndDrawing();
 }
 
-void DrawMenu(GameSession *s)
+void DrawMenu(GameSession *s, GameResources *res)
 {
-  // Fundo simples ou estilizado
-  ClearBackground(RAYWHITE);
+  // Desenha fundo
+  DrawTexture(res->texBackground, 0, 0, WHITE);
 
-  const char *title = "JOGO DA VELHA";
-  DrawText(title, (SCREEN_WIDTH - MeasureText(title, 80)) / 2, 150, 80, DARKGRAY);
+  Vector2 mousePos = GetMousePosition();
 
-  const char *subtitle = "Escolha a Dificuldade:";
-  DrawText(subtitle, (SCREEN_WIDTH - MeasureText(subtitle, 40)) / 2, 350, 40, GRAY);
+  // Cores
+  Color btnColor = BLACK;
+  Color hoverColor = DARKGRAY;
+  Color selectedColor = MAROON;
 
-  // Mostra a dificuldade atual
-  const char *diffText;
-  Color diffColor;
-  switch (s->aiDifficulty)
+  // Botão JOGAR
+  Rectangle playRect = GetPlayBtnRect();
+  bool playHover = CheckCollisionPointRec(mousePos, playRect);
+  DrawRectangleRec(playRect, playHover ? hoverColor : btnColor);
+
+  const char *txtPlay = "JOGAR";
+  DrawText(txtPlay,
+           playRect.x + (playRect.width - MeasureText(txtPlay, 20)) / 2,
+           playRect.y + (playRect.height - 20) / 2, 20, RAYWHITE);
+
+  // Botões de Dificuldade
+  const char *diffTexts[3] = {"FÁCIL", "MÉDIO", "DIFÍCIL"};
+  Difficulty diffs[3] = {Easy, Medium, Hard};
+
+  for (int i = 0; i < 3; i++)
   {
-  case Easy:
-    diffText = "< FACIL >";
-    diffColor = GREEN;
-    break;
-  case Medium:
-    diffText = "< MEDIO >";
-    diffColor = ORANGE;
-    break;
-  case Hard:
-    diffText = "< DIFICIL >";
-    diffColor = RED;
-    break;
+    Rectangle r = GetDiffBtnRect(i);
+    bool hover = CheckCollisionPointRec(mousePos, r);
+
+    Color c = btnColor;
+    if (s->aiDifficulty == diffs[i])
+      c = selectedColor; // Selecionado
+    else if (hover)
+      c = hoverColor; // Mouse em cima
+
+    DrawRectangleRec(r, c);
+    DrawText(diffTexts[i],
+             r.x + (r.width - MeasureText(diffTexts[i], 18)) / 2,
+             r.y + (r.height - 18) / 2, 18, RAYWHITE);
   }
-
-  DrawText(diffText, (SCREEN_WIDTH - MeasureText(diffText, 50)) / 2, 420, 50, diffColor);
-
-  const char *instr = "Use as Setas ESQUERDA/DIREITA para mudar";
-  DrawText(instr, (SCREEN_WIDTH - MeasureText(instr, 20)) / 2, 500, 20, LIGHTGRAY);
-
-  const char *start = "Pressione ENTER para Iniciar";
-  DrawText(start, (SCREEN_WIDTH - MeasureText(start, 30)) / 2, 700, 30, BLACK);
 }
 
 void ResetGame(GameSession *s)
@@ -306,6 +333,7 @@ GameResources LoadGameResources()
   res.texVictoryX = LoadTexture(ASSETS_PATH "vit_shewdow.png");
   res.texVictoryO = LoadTexture(ASSETS_PATH "vit_dava.png");
   res.texDraw = LoadTexture(ASSETS_PATH "empate.png");
+  res.texBackground = LoadTexture(ASSETS_PATH "background.png");
 
   res.soundX = LoadSound(ASSETS_PATH "bazinga.wav");
   res.soundO = LoadSound(ASSETS_PATH "ondascerebrais.wav");
@@ -323,6 +351,7 @@ void UnloadGameResources(GameResources *res)
   UnloadTexture(res->texVictoryX);
   UnloadTexture(res->texVictoryO);
   UnloadTexture(res->texDraw);
+  UnloadTexture(res->texBackground); // Não esqueça de descarregar
 
   UnloadSound(res->soundX);
   UnloadSound(res->soundO);
