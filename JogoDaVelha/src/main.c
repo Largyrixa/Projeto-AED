@@ -12,6 +12,7 @@
 #define ASSETS_PATH "assets/"
 #endif
 
+const char texMenuPath[] = ASSETS_PATH "background.png";
 const char texXPath[] = ASSETS_PATH "x.png";
 const char texOPath[] = ASSETS_PATH "o.png";
 
@@ -32,7 +33,8 @@ int main()
   // Inicialização da janela do jogo.
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Jogo da Velha");
   InitAudioDevice();
-  
+
+  Texture2D background = LoadTexture(texMenuPath);
   Texture2D textureX = LoadTexture(texXPath);
   Texture2D textureO = LoadTexture(texOPath);
 
@@ -179,6 +181,7 @@ int main()
     EndDrawing();
   }
 
+  UnloadTexture(texMenuPath);
   UnloadTexture(textureX);
   UnloadTexture(textureO);
 
