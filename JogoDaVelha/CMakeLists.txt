@@ -5,8 +5,9 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 
 # Configurações para não compilar exemplos e jogos do raylib
-set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(BUILD_EXAMPLES    OFF CACHE BOOL "" FORCE)
+set(BUILD_GAMES       OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
   raylib
@@ -14,6 +15,10 @@ FetchContent_Declare(
   GIT_TAG "5.5" # Sugestão: usar uma tag de versão específica
   GIT_PROGRESS TRUE
 )
+
+if(UNIX AND NOT APPLE)
+    target_link_libraries(JogoDaVelha m pthread dl rt X11)
+endif()
 
 set(PLATFORM Desktop CACHE STRING "" FORCE)
 
