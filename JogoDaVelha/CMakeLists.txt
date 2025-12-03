@@ -17,6 +17,7 @@ FetchContent_Declare(
 )
 
 set(PLATFORM Desktop CACHE STRING "" FORCE)
+set(BUILD_SHARED_LIBRARIES OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(raylib)
 
