@@ -16,6 +16,7 @@ FetchContent_Declare(
   GIT_PROGRESS TRUE
 )
 
+set(BUILD_SHARED_LIBRARIES OFF CACHE BOOL "" FORCE)
 set(PLATFORM Desktop CACHE STRING "" FORCE)
 
 FetchContent_MakeAvailable(raylib)
@@ -42,4 +43,18 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
 # Setando a definição de pré-processador para o caminho dos assets
-target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="assets/")
+
+set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
+
+if(EXISTS "${ASSETS_DIR}")
+    # Comando que copia a pasta assets para o lado do executável após compilar
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ASSETS_DIR}
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+        COMMENT "Copiando assets para o diretório de saída..."
+    )
+else()
+    message(WARNING "Pasta 'assets' não encontrada! O jogo pode não rodar sem ela.")
+endif()
