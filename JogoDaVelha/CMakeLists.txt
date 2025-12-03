@@ -16,10 +16,6 @@ FetchContent_Declare(
   GIT_PROGRESS TRUE
 )
 
-if(UNIX AND NOT APPLE)
-    target_link_libraries(JogoDaVelha m pthread dl rt X11)
-endif()
-
 set(PLATFORM Desktop CACHE STRING "" FORCE)
 
 FetchContent_MakeAvailable(raylib)
